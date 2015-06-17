@@ -2,39 +2,42 @@ package capprotectors.saveyourcap;
 
 import android.graphics.Rect;
 
+import java.util.ArrayList;
+
 public class Professor {
+    public static ArrayList<String> grades = new ArrayList<>();
+    public static ArrayList<Integer> marks = new ArrayList<>();
+
     private int professorWidth;
     private int professorHeight;
     private int professorX; //center
     private int professorY;
     private float professorSpeed;
     private boolean dead = false;
-    
-    //Khanh added
-    private String grade;
-    String[] grades = {"A+","A","A-","B+","B","B-","C+","C","D+","D","F"};
-    
 
+    private String grade;
+    private int mark;
 
     public Rect r = new Rect(0, 0, 0, 0);
 
-    public Professor(int professorWidth, int professorHeight, int professorX, int professorY, float professorSpeed) {
+    public Professor(int professorWidth, int professorHeight, int professorX, int professorY, float professorSpeed, int gradeId) {
         this.professorWidth = professorWidth;
         this.professorHeight = professorHeight;
         this.professorX = professorX;
         this.professorY = professorY;
         this.professorSpeed = professorSpeed;
-        
-        //Khanh added
-        Random rd = new Random();
-        this.grade = grades[rd.nextInt(grades.length)];
+
+        this.grade = grades.get(gradeId);
+        this.mark = marks.get(gradeId);
     }
 
     public void update() {
         professorX += professorSpeed;
         r.set(professorX-professorWidth/2, professorY-professorHeight/2, professorX+professorWidth/2, professorY+professorHeight/2);
         if (r.intersect(Student.boundingBox)){
-            // interactWithStudent();
+            if (this.grade == "F") //TODO move condition to raw
+                GameScreen.getStudent().lostALife();
+            GameScreen.addScore(this.getScore());
             die();
         } else if (r.intersect(0, 0, 0, 800)) { // TODO: replace 800 with screenHeight
             die();
@@ -60,48 +63,6 @@ public class Professor {
     public String getGrade() {return grade;}
 
     public int getScore() {
-        if (this.grade.equals("A+")) {
-            return 10;
-        }
-
-        else if (this.grade.equals("A")){
-            return 9;
-        }
-
-        else if (this.grade.equals("A-")){
-            return 8;
-        }
-
-        else if (this.grade.equals("B+")){
-            return 7;
-        }
-
-        else if (this.grade.equals("B")){
-            return 6;
-        }
-
-        else if (this.grade.equals("B-")){
-            return 5;
-        }
-
-        else if (this.grade.equals("C+")){
-            return 4;
-        }
-
-        else if (this.grade.equals("C")){
-            return 3;
-        }
-
-        else if (this.grade.equals("D+")){
-            return -6;
-        }
-
-        else if (this.grade.equals("D")){
-            return -7;
-        }
-
-        else {
-            return -10;
-        }
+        return this.mark;
     }
 }

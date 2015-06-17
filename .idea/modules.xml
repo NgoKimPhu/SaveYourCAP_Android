@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SaveYourCAP.iml" filepath="$PROJECT_DIR$/SaveYourCAP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swarmConnect/swarmConnect.iml" filepath="$PROJECT_DIR$/swarmConnect/swarmConnect.iml" />
     </modules>
   </component>
 </project>

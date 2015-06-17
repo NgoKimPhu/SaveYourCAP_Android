@@ -9,8 +9,8 @@ public class Student {
     private int lives;
     private int studentWidth;
     private int studentHeight;
-    private int studentX = 150; //center
-    private int studentY = 400 ;
+    private int studentX; //center
+    private int studentY;
     private int studentDestY = studentY;
     private float studentSpeed;
     private int midPoint;
@@ -35,7 +35,8 @@ public class Student {
             }
         }
 
-        if ((studentSpeed > 0 && studentY+studentSpeed > studentDestY) || (studentSpeed < 0 && studentY+studentSpeed < studentDestY)) {
+        if (Math.abs(studentDestY-studentY)<2*inertia && studentSpeed > 0 && (studentY+studentSpeed > studentDestY) || (studentSpeed < 0 && studentY+studentSpeed < studentDestY)) {
+            studentSpeed = 0;
             studentY = studentDestY;
         }
         else {

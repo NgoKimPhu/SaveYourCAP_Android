@@ -1,9 +1,12 @@
 package capprotectors.saveyourcap;
 
+import com.swarmconnect.Swarm;
+
 import capprotectors.framework.Game;
 import capprotectors.framework.Graphics;
 import capprotectors.framework.Graphics.ImageFormat;
 import capprotectors.framework.Screen;
+import capprotectors.implementation.AndroidGame;
 
 public class LoadingScreen extends Screen {
     public LoadingScreen(Game game) {
@@ -24,10 +27,14 @@ public class LoadingScreen extends Screen {
 
         game.getAudio().createSound("fuse.ogg").play(1f);
         try {
-            Thread.sleep(2408);
+            Thread.sleep(2408/2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        Swarm.enableAlternativeMarketCompatability();
+        Swarm.setAllowGuests(true);
+        Swarm.init((AndroidGame) game, 17981, "b3efa3ee656161523093b42ecad22ae5");
 
         game.setScreen(new MainMenuScreen(game));
     }

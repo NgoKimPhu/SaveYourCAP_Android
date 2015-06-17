@@ -24,7 +24,7 @@ public class MainMenuScreen extends Screen {
         for (TouchEvent event: touchEvents) {
             if (event.type == TouchEvent.TOUCH_UP) {
 
-                if (inBounds(event, 0, g.getHeight()-150, 250, g.getHeight())) {
+                if (inBounds(event, 16, g.getHeight()-149, 319-16, 149-15)) {
                     //START GAME
                     Assets.click.play(1f);
                     game.setScreen(new GameScreen(game));

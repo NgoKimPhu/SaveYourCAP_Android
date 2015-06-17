@@ -1,12 +1,13 @@
 package capprotectors.implementation;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.swarmconnect.SwarmActivity;
 
 import capprotectors.framework.Audio;
 import capprotectors.framework.FileIO;
@@ -15,7 +16,7 @@ import capprotectors.framework.Graphics;
 import capprotectors.framework.Input;
 import capprotectors.framework.Screen;
 
-public abstract class AndroidGame extends Activity implements Game {
+public abstract class AndroidGame extends SwarmActivity implements Game {
     private AndroidFastRenderView renderView;
     private Graphics graphics;
     private Audio audio;

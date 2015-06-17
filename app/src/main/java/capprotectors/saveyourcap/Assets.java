@@ -13,7 +13,7 @@ public class Assets {
     public static void load(MainGame mainGame) {
         theme = mainGame.getAudio().createMusic("menutheme.mp3");
         theme.setLooping(true);
-        theme.setVolume(0.85f);
+        theme.setVolume(0.65f);
         theme.play();
     }
 }
