@@ -25,7 +25,11 @@ public class LoadingScreen extends Screen {
         Assets.mainmenu = g.newImage("mainmenu.png", ImageFormat.RGB565);
         Assets.background = g.newImage("background.png", ImageFormat.RGB565);
 //        Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
-        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
+//        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
+        for (int i=0; i<14; i++)
+            Assets.student[i] = g.newImage("student/"+i+".png", ImageFormat.ARGB4444);
+        for (int i=0; i<9; i++)
+            Assets.su[i] = g.newImage("bonus/su/"+i+".png", ImageFormat.ARGB4444);
         Assets.professor = g.newImage("professor.jpg", ImageFormat.ARGB4444);
 
         Assets.click = game.getAudio().createSound("click.ogg");
