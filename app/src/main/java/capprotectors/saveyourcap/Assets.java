@@ -6,7 +6,7 @@ import capprotectors.framework.Sound;
 
 public class Assets {
     public static Image mainmenu, menu, splash, background, button;
-    public static Image student, professor;
+    public static Image student, professor, SU;
     public static Sound click;
     public static Music theme;
 
