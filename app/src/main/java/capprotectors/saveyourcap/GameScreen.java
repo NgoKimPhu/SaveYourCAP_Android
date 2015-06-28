@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import capprotectors.framework.Game;
 import capprotectors.framework.Graphics;
+import capprotectors.framework.Image;
 import capprotectors.framework.Input.TouchEvent;
 import capprotectors.framework.Screen;
 
@@ -26,8 +27,10 @@ public class GameScreen extends Screen {
     // Variable Setup
 
     private Background bg1, bg2;
+    private Animation stuAnim, suAnim;
 
     private Student student;
+    private Bonus su;
     public ArrayList<Professor> professors = new ArrayList<>();
     int lives = 3;
 
@@ -60,7 +63,14 @@ public class GameScreen extends Screen {
         bg1.setSpeedX(scrollSpeed);
         bg2.setSpeedX(scrollSpeed);
 
-        student = new Student(lives, Assets.student.getWidth(), Assets.student.getHeight(), 100, screenHeight/2);
+        student = new Student(lives, Assets.student[0].getWidth(), Assets.student[0].getHeight(), 100, screenHeight/2);
+        stuAnim = new Animation();
+        for (int i=0; i<14; i++)
+            stuAnim.addFrame(Assets.student[i], 50);
+
+        suAnim = new Animation();
+        for (int i=0; i<9; i++)
+            suAnim.addFrame(Assets.su[i], 40);
 
         loadRaw();
 
@@ -194,6 +204,10 @@ public class GameScreen extends Screen {
                     screenWidth+Assets.professor.getWidth()/2, (int) Math.floor((Math.random()*3+1))*screenHeight/4,
                     scrollSpeed, nextGrade()));
 
+        if (Math.random()<Math.pow(spawnChance, 1.2))
+            if (su == null)
+                su = new Bonus(this, screenWidth+Assets.su[0].getWidth()/2, (int) Math.floor((Math.random()*3+1))*screenHeight/4, scrollSpeed, 0, 1);
+
         for (int i = professors.size()-1; i>=0; i--) {
             Professor professor = professors.get(i);
             if (professor.isDead()) {
@@ -204,8 +218,18 @@ public class GameScreen extends Screen {
             }
         }
 
+        if (su.isDead())
+            su=null;
+        else su.update();
+
         bg1.update();
         bg2.update();
+        animate();
+    }
+
+    private void animate() {
+        stuAnim.update(10);
+        suAnim.update(10);
     }
 
     private void increaseDifficulty() {
@@ -285,11 +309,13 @@ public class GameScreen extends Screen {
         g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
         g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
 
-        g.drawImage(Assets.student, student.getX()-student.getWidth()/2, student.getY()-student.getHeight()/2);
+        g.drawImage(stuAnim.getImage(), student.getX()-student.getWidth()/2, student.getY()-student.getHeight()/2);
         for (Professor professor : professors) {
             g.drawImage(Assets.professor, professor.getX()-professor.getProfessorWidth()/2, professor.getY()-professor.getProfessorHeight()/2);
             g.drawString(professor.getGrade(), professor.getX(), professor.getY(), greenMedPaint);
         }
+        if (su!=null)
+            g.drawImage(suAnim.getImage(), su.getX()-su.getWidth()/2, su.getY()-su.getHeight()/2);
 
         String hearts = "";
         for (int i=0; i<student.getLives(); i++) hearts+="♥";
@@ -317,6 +343,7 @@ public class GameScreen extends Screen {
         bg1 = null;
         bg2 = null;
         student = null;
+        stuAnim = null;
         professors = null;
         // Call garbage collector to clean up memory.
         System.gc();
