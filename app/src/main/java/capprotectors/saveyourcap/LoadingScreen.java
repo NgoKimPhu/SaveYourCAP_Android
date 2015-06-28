@@ -27,6 +27,8 @@ public class LoadingScreen extends Screen {
 //        Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
         Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
         Assets.professor = g.newImage("professor.jpg", ImageFormat.ARGB4444);
+        
+        Assets.SU = g.newImage("SU.png", ImageFormat.ARGB4444);
 
         Assets.click = game.getAudio().createSound("click.ogg");
 
