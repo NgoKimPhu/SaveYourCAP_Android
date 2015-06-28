@@ -51,6 +51,10 @@ public class Student {
         lives -= 1;
     }
 
+    public void gotALife(){
+        lives += 1;
+    }
+
     public int getLives() {
         return lives;
     }

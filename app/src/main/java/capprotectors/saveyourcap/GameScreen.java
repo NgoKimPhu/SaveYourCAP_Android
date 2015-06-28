@@ -218,9 +218,10 @@ public class GameScreen extends Screen {
             }
         }
 
-        if (su.isDead())
-            su=null;
-        else su.update();
+        if (su!=null)
+            if (su.isDead())
+                su = null;
+            else su.update();
 
         bg1.update();
         bg2.update();

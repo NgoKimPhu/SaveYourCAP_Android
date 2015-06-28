@@ -33,7 +33,7 @@ public class Bonus {
         r.set(bonusX-bonusWidth/2, bonusY-bonusHeight/2, bonusX+bonusWidth/2, bonusY+bonusHeight/2);
         if (r.intersect(Student.boundingBox)){
             if (id==0)
-                game.lives+=value;
+                game.getStudent().gotALife();
             die();
         } else if (r.intersect(0, 0, 0, 800)) { // TODO: replace 800 with screenHeight
             die();
