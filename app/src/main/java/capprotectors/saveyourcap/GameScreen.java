@@ -12,29 +12,31 @@ import java.util.Scanner;
 
 import capprotectors.framework.Game;
 import capprotectors.framework.Graphics;
-import capprotectors.framework.Image;
 import capprotectors.framework.Input.TouchEvent;
 import capprotectors.framework.Screen;
 
 public class GameScreen extends Screen {
 
-
     enum GameState {
         Ready, Running, Paused, GameOver
     }
+
     GameState state = GameState.Ready;
-
-    // Variable Setup
-
     private Background bg1, bg2;
     private Animation stuAnim, suAnim;
 
     private Student student;
+
     private Bonus su;
     public ArrayList<Professor> professors = new ArrayList<>();
-    int lives = 3;
 
+    int lives = 3;
+    // Variable Setup
+    private int[] stat;
+
+    private int coin;
     private int score = 0;
+    private boolean firstGGDraw;
 
     // You would create game objects here.
 
@@ -72,12 +74,18 @@ public class GameScreen extends Screen {
         for (int i=0; i<9; i++)
             suAnim.addFrame(Assets.su[i], 40);
 
-        loadRaw();
+        if (Professor.grades.size()<1) {
+            loadRaw();
+        }
+        stat = new int[Professor.grades.size()];
+        firstGGDraw = true;
 
-        biggerGradeChance = new float[Professor.grades.size()];
-        for (int i = 0; i<biggerGradeChance.length-1; i++)
-            biggerGradeChance[i] = (float) Math.sqrt(1-1f/(biggerGradeChance.length-i)); //higher chance for bigger grades at first;
-        biggerGradeChance[biggerGradeChance.length-1] = 0;
+        if (biggerGradeChance == null) {
+            biggerGradeChance = new float[Professor.grades.size()];
+            for (int i = 0; i < biggerGradeChance.length - 1; i++)
+                biggerGradeChance[i] = (float) Math.sqrt(1 - 1f / (biggerGradeChance.length - i)); //higher chance for bigger grades at first;
+            biggerGradeChance[biggerGradeChance.length - 1] = 0;
+        }
         for (int i = 0; i<biggerGradeChance.length; i++)
             Log.i("Grades up chance from ", i+": "+biggerGradeChance[i]);
 
@@ -252,7 +260,7 @@ public class GameScreen extends Screen {
         int next = 0;
         while (Math.random() < biggerGradeChance[next]*gradeChanceChange)
             next++;
-        return next;
+        return Professor.grades.size() - 1 - next;
     }
 
     private boolean inBounds(TouchEvent event, int x, int y, int width, int height) {
@@ -307,21 +315,23 @@ public class GameScreen extends Screen {
         // Example:
         // g.drawImage(Assets.background, 0, 0);
         // g.drawImage(Assets.character, characterX, characterY);
-        g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
-        g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
+        if (firstGGDraw) {
+            g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
+            g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
 
-        g.drawImage(stuAnim.getImage(), student.getX()-student.getWidth()/2, student.getY()-student.getHeight()/2);
-        for (Professor professor : professors) {
-            g.drawImage(Assets.professor, professor.getX()-professor.getProfessorWidth()/2, professor.getY()-professor.getProfessorHeight()/2);
-            g.drawString(professor.getGrade(), professor.getX(), professor.getY(), greenMedPaint);
+            g.drawImage(stuAnim.getImage(), student.getX() - student.getWidth() / 2, student.getY() - student.getHeight() / 2);
+            for (Professor professor : professors) {
+                g.drawImage(Assets.professor, professor.getX() - professor.getProfessorWidth() / 2, professor.getY() - professor.getProfessorHeight() / 2);
+                g.drawString(professor.getGrade(), professor.getX(), professor.getY(), greenMedPaint);
+            }
+            if (su != null)
+                g.drawImage(suAnim.getImage(), su.getX() - su.getWidth() / 2, su.getY() - su.getHeight() / 2);
+
+            String hearts = "";
+            for (int i = 0; i < student.getLives(); i++) hearts += "♥";
+            g.drawString(hearts, 50, 100, redBigPaint);
+            g.drawString(score + "", screenWidth - 200, 100, paint2);
         }
-        if (su!=null)
-            g.drawImage(suAnim.getImage(), su.getX()-su.getWidth()/2, su.getY()-su.getHeight()/2);
-
-        String hearts = "";
-        for (int i=0; i<student.getLives(); i++) hearts+="♥";
-        g.drawString(hearts, 50, 100, redBigPaint);
-        g.drawString(score+"", screenWidth - 200, 100, paint2);
         g.drawString("FPS:"+((int) (100/deltaTime)), 60, screenHeight-25, paint); //TODO option to show/hide in setting
 
         // Secondly, draw the UI above the game elements.
@@ -340,12 +350,18 @@ public class GameScreen extends Screen {
 
         // Set all variables to null. You will be recreating them in the
         // constructor.
-        paint = null;
         bg1 = null;
         bg2 = null;
-        student = null;
         stuAnim = null;
+        suAnim = null;
+        student = null;
         professors = null;
+        su = null;
+        stat = null;
+        paint = null;
+        paint2= null;
+        redBigPaint = null;
+        greenMedPaint = null;
         // Call garbage collector to clean up memory.
         System.gc();
     }
@@ -374,10 +390,24 @@ public class GameScreen extends Screen {
 
     private void drawGameOverUI() {
         Graphics g = game.getGraphics();
-        g.drawRect(0, 0, 1281, 801, Color.BLACK);
-        g.drawString("GAME OVER.", 640, 400, paint2);
-        g.drawString("Tap to return", 640, 290, paint);
-        g.drawString("Submit score?", 640, 460, paint);
+        if (firstGGDraw) {
+            g.drawRect(0, 0, 1281, 801, Color.BLACK);
+            g.drawString("GAME OVER.", 640, 150, paint2);
+            firstGGDraw = false;
+        }
+        int i = 0;
+        while (stat[i]<0 && i<stat.length-1) i++;
+        if (stat[i]>-1) {
+            g.drawString(Professor.grades.get(i)+": "+stat[i]+", coin +="+stat[i]+"x"+(stat.length-1-i), 120, 64 + 64 * i, paint);
+            coin += stat[i] * (stat.length-1-i);
+            g.drawRect(1080, 360, 1240, 440, Color.BLACK);
+            g.drawString(coin+"", 1160, 400, paint);
+            stat[i] = -1;
+        }
+        else {
+            g.drawString("Tap to return", 640, 290, paint);
+            g.drawString("Submit score?", 640, 460, paint);
+        }
     }
 
     @Override
@@ -421,5 +451,9 @@ public class GameScreen extends Screen {
 
     public void addScore(int dScore) {
         score += dScore;
+    }
+
+    public void addStat(int gradeId) {
+        stat[gradeId]++;
     }
 }

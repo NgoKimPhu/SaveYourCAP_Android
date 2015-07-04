@@ -15,8 +15,7 @@ public class Professor {
     private float professorSpeed;
     private boolean dead = false;
 
-    private String grade;
-    private int mark;
+    private int gradeId;
 
     public Rect r = new Rect(0, 0, 0, 0);
     private GameScreen game;
@@ -29,17 +28,17 @@ public class Professor {
         this.professorY = professorY;
         this.professorSpeed = professorSpeed;
 
-        this.grade = grades.get(gradeId);
-        this.mark = marks.get(gradeId);
+        this.gradeId = gradeId;
     }
 
     public void update() {
         professorX += professorSpeed;
         r.set(professorX-professorWidth/2, professorY-professorHeight/2, professorX+professorWidth/2, professorY+professorHeight/2);
         if (r.intersect(Student.boundingBox)){
-            if (this.grade.equals("F")) //TODO move condition to raw
+            if (this.getGrade().equals(grades.get(grades.size())))
                 game.getStudent().lostALife();
             game.addScore(this.getScore());
+            game.addStat(gradeId);
             die();
         } else if (r.intersect(-this.professorWidth, 200, -this.professorWidth, 800)) { // TODO: replace 800 with screenHeight
             die();
@@ -70,9 +69,9 @@ public class Professor {
         return dead;
     }
     
-    public String getGrade() {return grade;}
+    public String getGrade() {return grades.get(gradeId);}
 
     public int getScore() {
-        return this.mark;
+        return marks.get(gradeId);
     }
 }
