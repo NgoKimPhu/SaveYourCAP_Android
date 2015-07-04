@@ -29,6 +29,7 @@ public class GameScreen extends Screen {
 
     private Bonus su;
     public ArrayList<Professor> professors = new ArrayList<>();
+    private float[] laneCooldown = new float[3]; // = [0, 0, 0]
 
     int lives = 3;
     // Variable Setup
@@ -208,13 +209,17 @@ public class GameScreen extends Screen {
         }
 
         if (Math.random()<spawnChance)
-            professors.add(new Professor(this, Assets.professor.getWidth(), Assets.professor.getHeight(),
-                    screenWidth+Assets.professor.getWidth()/2, (int) Math.floor((Math.random()*3+1))*screenHeight/4,
-                    scrollSpeed, nextGrade()));
+            spawn("Prof", Assets.professor.getWidth(), Assets.professor.getHeight(),
+                    screenWidth+Assets.professor.getWidth()/2, (int) (Math.random()*3),
+                    scrollSpeed, 0, nextGrade());
 
-        if (Math.random()<Math.pow(spawnChance, 1.2))
-            if (su == null)
-                su = new Bonus(this, screenWidth+Assets.su[0].getWidth()/2, (int) Math.floor((Math.random()*3+1))*screenHeight/4, scrollSpeed, 0, 1);
+        if (Math.random()<Math.pow(spawnChance, 2))
+            spawn("Bonus", Assets.su[0].getWidth(), Assets.su[0].getHeight(),
+                    screenWidth+Assets.su[0].getWidth()/2, (int) (Math.random()*3), scrollSpeed, 0, 1);
+
+        for (int i = 0; i < laneCooldown.length; i++)
+            if (laneCooldown[i]>0)
+                laneCooldown[i] -= deltaTime;
 
         for (int i = professors.size()-1; i>=0; i--) {
             Professor professor = professors.get(i);
@@ -234,6 +239,19 @@ public class GameScreen extends Screen {
         bg1.update();
         bg2.update();
         animate();
+    }
+
+    private void spawn(String type, int w, int h, int x, int y, int speed, int id, int val) {
+        if (laneCooldown[y] <= 0) {
+            laneCooldown[y] = 666/speed;
+            y+=1;
+            if (type.equals("Prof"))
+                professors.add(new Professor(this, w, h, x, y*screenHeight/4, speed, val));
+            else if (type.equals("Bonus"))
+                if (id == 0) // SU
+                    if (su == null)
+                        su = new Bonus(this, x, y*screenHeight/4, speed, id, val);
+        }
     }
 
     private void animate() {
@@ -355,8 +373,9 @@ public class GameScreen extends Screen {
         stuAnim = null;
         suAnim = null;
         student = null;
-        professors = null;
         su = null;
+        professors = null;
+        laneCooldown = null;
         stat = null;
         paint = null;
         paint2= null;
