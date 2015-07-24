@@ -30,7 +30,8 @@ public class LoadingScreen extends Screen {
             Assets.student[i] = g.newImage("student/"+i+".png", ImageFormat.ARGB4444);
         for (int i=0; i<9; i++)
             Assets.su[i] = g.newImage("bonus/su/"+i+".png", ImageFormat.ARGB4444);
-        Assets.professor = g.newImage("professor.jpg", ImageFormat.ARGB4444);
+        Assets.prof[0] = g.newImage("prof/regu.png", ImageFormat.ARGB4444);
+        Assets.prof[1] = g.newImage("prof/bad.png", ImageFormat.ARGB4444);
 
         Assets.click = game.getAudio().createSound("click.ogg");
 

@@ -87,9 +87,9 @@ public class GameScreen extends Screen {
                 biggerGradeChance[i] = (float) Math.sqrt(1 - 1f / (biggerGradeChance.length - i)); //higher chance for bigger grades at first;
             biggerGradeChance[biggerGradeChance.length - 1] = 0;
         }
-        for (int i = 0; i<biggerGradeChance.length; i++)
+        /*for (int i = 0; i<biggerGradeChance.length; i++)
             Log.i("Grades up chance from ", i+": "+biggerGradeChance[i]);
-
+        */
         // Defining a paint object
         paint = new Paint();
         paint.setTextSize(30);
@@ -111,7 +111,7 @@ public class GameScreen extends Screen {
         redBigPaint.setColor(Color.RED);
 
         greenMedPaint = new Paint();
-        greenMedPaint.setTextSize(75);
+        greenMedPaint.setTextSize(69);
         greenMedPaint.setTextAlign(Paint.Align.CENTER);
         greenMedPaint.setAntiAlias(true);
         greenMedPaint.setColor(Color.GREEN);
@@ -184,12 +184,15 @@ public class GameScreen extends Screen {
             else if (event.type == TouchEvent.TOUCH_UP) {
                 if (event.x > screenWidth-100 && event.y < 100)
                     pause();
-                if (event.y > screenHeight*3/4)
+                for (Professor x:professors)
+                    if (x.type == 1 && x.r.contains(event.x, event.y))
+                        x.die();
+                /*if (event.y > screenHeight*3/4)
                     student.moveTo(3);
                 else if (event.y > screenHeight/2)
                     student.moveTo(2);
                 else if (event.y > screenHeight/4)
-                    student.moveTo(1);
+                    student.moveTo(1);*/
             }
         }
 
@@ -209,8 +212,8 @@ public class GameScreen extends Screen {
         }
 
         if (Math.random()<spawnChance)
-            spawn("Prof", Assets.professor.getWidth(), Assets.professor.getHeight(),
-                    screenWidth+Assets.professor.getWidth()/2, (int) (Math.random()*3),
+            spawn("Prof", Assets.prof[0].getWidth(), Assets.prof[0].getHeight(),
+                    screenWidth+Assets.prof[0].getWidth()/2, (int) (Math.random()*3),
                     scrollSpeed, 0, nextGrade());
 
         if (Math.random()<Math.pow(spawnChance, 2))
@@ -339,8 +342,8 @@ public class GameScreen extends Screen {
 
             g.drawImage(stuAnim.getImage(), student.getX() - student.getWidth() / 2, student.getY() - student.getHeight() / 2);
             for (Professor professor : professors) {
-                g.drawImage(Assets.professor, professor.getX() - professor.getProfessorWidth() / 2, professor.getY() - professor.getProfessorHeight() / 2);
-                g.drawString(professor.getGrade(), professor.getX(), professor.getY(), greenMedPaint);
+                g.drawImage(Assets.prof[professor.type], professor.getX() - professor.getProfessorWidth() / 2, professor.getY() - professor.getProfessorHeight() / 2);
+                g.drawString(professor.getGrade(), professor.getX()-58, professor.getY()-2, greenMedPaint);
             }
             if (su != null)
                 g.drawImage(suAnim.getImage(), su.getX() - su.getWidth() / 2, su.getY() - su.getHeight() / 2);
@@ -389,8 +392,12 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
 
         g.drawARGB(155, 255, 255, 255);
-        g.drawString("Tap to move to another lane.",
-                640, 300, paint);
+        g.drawString("Swipe to move to another lane.",
+                640, 350, paint);
+        g.drawString("Collect regular profs          that give good grades.",640, 415, paint);
+        g.drawString("Tap to get rid of the bad profs         ",640, 460, paint);
+        g.drawImage(Assets.prof[0], 600, 415 - Assets.prof[0].getHeight()/2);
+        g.drawImage(Assets.prof[1], 800, 460 - Assets.prof[0].getHeight()/2);
 
     }
 
