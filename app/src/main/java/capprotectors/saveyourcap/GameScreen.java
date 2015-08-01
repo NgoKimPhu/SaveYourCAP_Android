@@ -51,7 +51,7 @@ public class GameScreen extends Screen {
 
     public static int screenWidth;
     public static int screenHeight;
-    Paint paint, paint2, redBigPaint, greenMedPaint;
+    Paint paint, paint2, redBigPaint, greenMedPaint, redWhiteBorderPaint;
 
     public GameScreen(Game game) {
 
@@ -62,13 +62,15 @@ public class GameScreen extends Screen {
 
         // Initialize game objects here
         bg1 = new Background(0, 0);
-        bg2 = new Background(2160, 0);
+        bg2 = new Background(Assets.background.getWidth(), 0);
         bg1.setSpeedX(scrollSpeed);
         bg2.setSpeedX(scrollSpeed);
 
         student = new Student(lives, Assets.student[0].getWidth(), Assets.student[0].getHeight(), 100, screenHeight/2);
         stuAnim = new Animation();
-        for (int i=0; i<14; i++)
+        for (int i=0; i<=8; i++)
+            stuAnim.addFrame(Assets.student[i], 50);
+        for (int i=7; i>=0; i--)
             stuAnim.addFrame(Assets.student[i], 50);
 
         suAnim = new Animation();
@@ -108,13 +110,20 @@ public class GameScreen extends Screen {
         redBigPaint.setTextAlign(Paint.Align.LEFT);
         redBigPaint.setTextScaleX(.8f);
         redBigPaint.setAntiAlias(true);
-        redBigPaint.setColor(Color.RED);
 
         greenMedPaint = new Paint();
         greenMedPaint.setTextSize(69);
         greenMedPaint.setTextAlign(Paint.Align.CENTER);
         greenMedPaint.setAntiAlias(true);
         greenMedPaint.setColor(Color.GREEN);
+        redBigPaint.setColor(Color.RED);
+
+        redWhiteBorderPaint = new Paint();
+        redWhiteBorderPaint.setTextSize(100);
+        redWhiteBorderPaint.setTextAlign(Paint.Align.CENTER);
+        redWhiteBorderPaint.setAntiAlias(true);
+        redWhiteBorderPaint.setColor(Color.RED);
+        redWhiteBorderPaint.setStrokeWidth(4f);
     }
 
     private void loadRaw() {
@@ -182,12 +191,12 @@ public class GameScreen extends Screen {
                 break;
             }
             else if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.x > screenWidth-100 && event.y < 100)
+                if (event.x > screenWidth-118 && event.y < 118)
                     pause();
                 for (Professor x:professors)
                     if (x.type == 1 && x.r.contains(event.x, event.y))
                         x.die();
-                /*if (event.y > screenHeight*3/4)
+                /*if (event.y > screenHeight*3/4) //tap to move
                     student.moveTo(3);
                 else if (event.y > screenHeight/2)
                     student.moveTo(2);
@@ -246,7 +255,7 @@ public class GameScreen extends Screen {
 
     private void spawn(String type, int w, int h, int x, int y, int speed, int id, int val) {
         if (laneCooldown[y] <= 0) {
-            laneCooldown[y] = 666/speed;
+            laneCooldown[y] = -1.2f*w/speed;
             y+=1;
             if (type.equals("Prof"))
                 professors.add(new Professor(this, w, h, x, y*screenHeight/4, speed, val));
@@ -391,19 +400,19 @@ public class GameScreen extends Screen {
     private void drawReadyUI() {
         Graphics g = game.getGraphics();
 
-        g.drawARGB(155, 255, 255, 255);
+        g.drawARGB(155, 0, 0, 0);
         g.drawString("Swipe to move to another lane.",
-                640, 350, paint);
-        g.drawString("Collect regular profs          that give good grades.",640, 415, paint);
-        g.drawString("Tap to get rid of the bad profs         ",640, 460, paint);
-        g.drawImage(Assets.prof[0], 600, 415 - Assets.prof[0].getHeight()/2);
-        g.drawImage(Assets.prof[1], 800, 460 - Assets.prof[0].getHeight()/2);
+                640, 340, paint);
+        g.drawString("Collect regular profs          that give good grades.",640, 420, paint);
+        g.drawString("Tap to get rid of the bad profs         ",640, 490, paint);
+        g.drawImage(Assets.prof[0], 600, 420 - Assets.prof[0].getHeight()/2);
+        g.drawImage(Assets.prof[1], 800, 490 - Assets.prof[0].getHeight()/2);
 
     }
 
     private void drawRunningUI() {
         //Graphics g = game.getGraphics();
-
+        g.drawImage(Assets.pause, screenWidth-118, 18);
     }
 
     private void drawPausedUI() {
@@ -411,13 +420,13 @@ public class GameScreen extends Screen {
         // Fill transparently the entire screen so you can display the Paused screen.
         g.drawARGB(155, 0, 0, 0);
         g.drawString("Resume", screenWidth/2, screenHeight*3/8, paint2);
-        g.drawString("Menu",   screenWidth/2, screenHeight*5/8, paint2);
+        g.drawString("Menu", screenWidth / 2, screenHeight*5/8, paint2);
     }
 
     private void drawGameOverUI() {
         Graphics g = game.getGraphics();
         if (firstGGDraw) {
-            g.drawRect(0, 0, 1281, 801, Color.BLACK);
+            g.drawARGB(155, 0, 0, 0);
             g.drawString("GAME OVER.", 640, 150, paint2);
             firstGGDraw = false;
         }

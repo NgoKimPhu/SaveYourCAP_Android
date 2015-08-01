@@ -27,38 +27,38 @@ public class MainMenuScreen extends Screen {
         for (TouchEvent event : touchEvents) {
             if (event.type == TouchEvent.TOUCH_UP) {
 
-                if (inBounds(event, 50, 300, 550, 300)) {
+                if (inBounds(event, 80, 301, 629-80, 656-301)) {
                     //START GAME
                     Assets.click.play(1f);
                     game.setScreen(new GameScreen(game));
                 }
 
-                if (inBounds(event, 50, 620, 550, 750 - 620)) {
+                if (inBounds(event, 80, 679, 629 - 80, 751 - 679)) {
                     Assets.click.play(1f);
                     Swarm.showDashboard();
                 }
 
-                if (inBounds(event, 620, 295, 1235 - 620, 365 - 295)) {
+                if (inBounds(event, 653, 299, 1202 - 653, 371 - 299)) {
                     Assets.click.play(1f);
                     toggleMusic();
                 }
 
-                if (inBounds(event, 620, 380, 1235 - 620, 440 - 380)) {
+                if (inBounds(event, 653, 391, 1202 - 653, 463 - 391)) {
                     Assets.click.play(1f);
                     Swarm.showAchievements();
                 }
 
-                if (inBounds(event, 620, 460, 1230 - 620, 530 - 460)) {
+                if (inBounds(event, 653, 493, 1202 - 653, 565 - 493)) {
                     Assets.click.play(1f);
                     Swarm.showLeaderboards();
                 }
 
-                if (inBounds(event, 620, 555, 1235 - 620, 620 - 555)) {
+                if (inBounds(event, 653, 584, 1202 - 653, 656 - 584)) {
                     Assets.click.play(1f);
                     Swarm.showStore();
                 }
 
-                if (inBounds(event, 650, 640, 1230 - 620, 110)) {
+                if (inBounds(event, 653, 679, 1202 - 653, 751 - 679)) {
                     confirmExit();
                 }
 
@@ -75,7 +75,7 @@ public class MainMenuScreen extends Screen {
     @Override
     public void paint(float deltaTime) {
         Graphics g = game.getGraphics();
-        g.drawScaledImage(Assets.mainmenu, 0, 0, g.getWidth(), g.getHeight(), 0, 0, Assets.mainmenu.getWidth(), Assets.mainmenu.getHeight());
+        g.drawScaledImage(Assets.menu, 0, 0, g.getWidth(), g.getHeight(), 0, 0, Assets.menu.getWidth(), Assets.menu.getHeight());
     }
 
     @Override

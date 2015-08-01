@@ -13,8 +13,8 @@ public class Background {
     public void update() {
         bgX += speedX;
 
-        if (bgX <= -2160){
-            bgX += 4320;
+        if (bgX <= -Assets.background.getWidth()){
+            bgX += 2*Assets.background.getWidth();
         }
     }
 

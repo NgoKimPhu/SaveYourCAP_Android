@@ -22,12 +22,12 @@ public class LoadingScreen extends Screen {
         super(game);
         Graphics g = game.getGraphics();
 
-        Assets.mainmenu = g.newImage("mainmenu.png", ImageFormat.RGB565);
-        Assets.background = g.newImage("background.png", ImageFormat.RGB565);
-//        Assets.button = g.newImage("button.jpg", ImageFormat.RGB565);
+        Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
+        Assets.background = g.newImage("background/0.jpg", ImageFormat.RGB565);
+        Assets.pause = g.newImage("pause.png", ImageFormat.RGB565);
 //        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
-        for (int i=0; i<14; i++)
-            Assets.student[i] = g.newImage("student/"+i+".png", ImageFormat.ARGB4444);
+        for (int i=0; i<9; i++)
+            Assets.student[i] = g.newImage("student/1/"+i+".png", ImageFormat.ARGB4444);
         for (int i=0; i<9; i++)
             Assets.su[i] = g.newImage("bonus/su/"+i+".png", ImageFormat.ARGB4444);
         Assets.prof[0] = g.newImage("prof/regu.png", ImageFormat.ARGB4444);
