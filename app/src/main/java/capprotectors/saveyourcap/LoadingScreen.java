@@ -22,7 +22,7 @@ public class LoadingScreen extends Screen {
         super(game);
         Graphics g = game.getGraphics();
 
-        Assets.menu = g.newImage("menu.png", ImageFormat.RGB565);
+        Assets.menu = g.newImage("menu.jpg", ImageFormat.RGB565);
         Assets.background = g.newImage("background/0.jpg", ImageFormat.RGB565);
         Assets.pause = g.newImage("pause.png", ImageFormat.RGB565);
 //        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);

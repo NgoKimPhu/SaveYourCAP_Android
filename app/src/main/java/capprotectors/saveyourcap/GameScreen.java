@@ -70,7 +70,7 @@ public class GameScreen extends Screen {
         stuAnim = new Animation();
         for (int i=0; i<=8; i++)
             stuAnim.addFrame(Assets.student[i], 50);
-        for (int i=7; i>=0; i--)
+        for (int i=6; i>=0; i--)
             stuAnim.addFrame(Assets.student[i], 50);
 
         suAnim = new Animation();
@@ -324,7 +324,7 @@ public class GameScreen extends Screen {
                 if (inBounds(event, 0, 0, 1280, 400)) {
                     Assets.click.play(.85f);
                     nullify();
-                    game.setScreen(new MainMenuScreen(game));
+                    goToMenu();
                     return;
                 }
                 if (inBounds(event, 0, 400, 1280, 400)) {
@@ -402,17 +402,17 @@ public class GameScreen extends Screen {
 
         g.drawARGB(155, 0, 0, 0);
         g.drawString("Swipe to move to another lane.",
-                640, 340, paint);
-        g.drawString("Collect regular profs          that give good grades.",640, 420, paint);
-        g.drawString("Tap to get rid of the bad profs         ",640, 490, paint);
+                640, 330, paint);
+        g.drawString("Collect regular profs                    that give good grades.",640, 420, paint);
+        g.drawString("Tap to get rid of the bad profs            ",640, 515, paint);
         g.drawImage(Assets.prof[0], 600, 420 - Assets.prof[0].getHeight()/2);
-        g.drawImage(Assets.prof[1], 800, 490 - Assets.prof[0].getHeight()/2);
+        g.drawImage(Assets.prof[1], 800, 515 - Assets.prof[0].getHeight()/2);
 
     }
 
     private void drawRunningUI() {
         //Graphics g = game.getGraphics();
-        g.drawImage(Assets.pause, screenWidth-118, 18);
+        g.drawImage(Assets.pause, screenWidth - 118, 18);
     }
 
     private void drawPausedUI() {
@@ -465,19 +465,18 @@ public class GameScreen extends Screen {
     @Override
     public void backButton() {
         Assets.click.play(.85f);
-        pause();
+        if (state == GameState.Paused)
+            resume();
+        else if (state == GameState.GameOver) {
+            nullify();
+            goToMenu();
+        }
+        else
+            pause();
     }
 
     private void goToMenu() {
         game.setScreen(new MainMenuScreen(game));
-    }
-
-    public Background getBg1() {
-        return bg1;
-    }
-
-    public Background getBg2() {
-        return bg2;
     }
 
     public Student getStudent() {
