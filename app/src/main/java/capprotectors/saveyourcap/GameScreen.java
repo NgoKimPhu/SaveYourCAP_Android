@@ -338,13 +338,7 @@ public class GameScreen extends Screen {
 
     @Override
     public void paint(float deltaTime) {
-        Graphics g = game.getGraphics();
 
-        // First draw the game elements.
-
-        // Example:
-        // g.drawImage(Assets.background, 0, 0);
-        // g.drawImage(Assets.character, characterX, characterY);
         if (firstGGDraw) {
             g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
             g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
@@ -398,8 +392,6 @@ public class GameScreen extends Screen {
     }
 
     private void drawReadyUI() {
-        Graphics g = game.getGraphics();
-
         g.drawARGB(155, 0, 0, 0);
         g.drawString("Swipe to move to another lane.",
                 640, 330, paint);
@@ -411,20 +403,16 @@ public class GameScreen extends Screen {
     }
 
     private void drawRunningUI() {
-        //Graphics g = game.getGraphics();
         g.drawImage(Assets.pause, screenWidth - 118, 18);
     }
 
     private void drawPausedUI() {
-        Graphics g = game.getGraphics();
-        // Fill transparently the entire screen so you can display the Paused screen.
         g.drawARGB(155, 0, 0, 0);
         g.drawString("Resume", screenWidth/2, screenHeight*3/8, paint2);
         g.drawString("Menu", screenWidth / 2, screenHeight*5/8, paint2);
     }
 
     private void drawGameOverUI() {
-        Graphics g = game.getGraphics();
         if (firstGGDraw) {
             g.drawARGB(155, 0, 0, 0);
             g.drawString("GAME OVER.", 640, 150, paint2);
