@@ -36,7 +36,7 @@ public class LoadingScreen extends Screen {
 
 //        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
         for (int i=0; i<9; i++)
-            Assets.student[i] = g.newImage("student/1/"+i+".png", ImageFormat.ARGB4444);
+            Assets.student[i] = g.newImage("student/2/"+i+".png", ImageFormat.ARGB4444);
         for (int i=0; i<7; i++)
             Assets.heart[i] = g.newImage("bonus/heart/"+i+".png", ImageFormat.ARGB4444);
         Assets.prof[0] = g.newImage("prof/regu.png", ImageFormat.ARGB4444);

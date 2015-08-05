@@ -486,9 +486,7 @@ public class GameScreen extends Screen {
 
         for (int i=1; i<4; i++) {
             if ((i-1)*screenHeight / 4 < student.getY() && student.getY() <= i*screenHeight / 4)
-//                g.drawImage(stuAnim.getImage(), student.getX() - student.getWidth() / 2, student.getY() - student.getHeight() / 2);
-                g.drawScaledImage(stuAnim.getImage(), student.getX() - student.getWidth() * 3 / 4, student.getY() - student.getHeight() * 3 / 4,
-                        student.getWidth() * 3 / 2, student.getHeight() * 3 / 2, 0, 0, student.getWidth(), student.getHeight());
+                g.drawImage(stuAnim.getImage(), student.getX() - student.getWidth() / 2, student.getY() - student.getHeight() / 2);
 
             for (Professor prof : professors)
                 if (prof.getY() == i*screenHeight / 4) {
