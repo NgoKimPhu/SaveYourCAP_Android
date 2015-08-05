@@ -24,6 +24,7 @@ public class LoadingScreen extends Screen {
         paint(0);
 
         Assets.menu = g.newImage("menu.jpg", ImageFormat.RGB565);
+        Assets.shop = g.newImage("shop.jpg", ImageFormat.RGB565);
         Assets.background = g.newImage("background/0.jpg", ImageFormat.RGB565);
         Assets.pause = g.newImage("pause.png", ImageFormat.ARGB4444);
         Assets.resume = g.newImage("resume.png", ImageFormat.ARGB4444);
@@ -41,7 +42,15 @@ public class LoadingScreen extends Screen {
         Assets.prof[0] = g.newImage("prof/regu.png", ImageFormat.ARGB4444);
         Assets.prof[1] = g.newImage("prof/bad.png", ImageFormat.ARGB4444);
 
-        Assets.click = game.getAudio().createSound("click.ogg");
+        Assets.badS = game.getAudio().createSound("bad.mp3");
+        Assets.brainS = game.getAudio().createSound("brain.mp3");
+        Assets.buyS = game.getAudio().createSound("buy.mp3");
+        Assets.clickS = game.getAudio().createSound("click.ogg");
+        Assets.coinS = game.getAudio().createSound("coin.mp3");
+        Assets.eatS = game.getAudio().createSound("eat.mp3");
+        Assets.gmovS = game.getAudio().createSound("gmov.mp3");
+        Assets.punchS = game.getAudio().createSound("punch.mp3");
+        Assets.suedS = game.getAudio().createSound("sued.mp3");
 
         game.getAudio().createSound("fuse.ogg").play(1f);
 

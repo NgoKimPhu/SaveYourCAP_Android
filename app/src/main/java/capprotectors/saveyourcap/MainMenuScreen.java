@@ -29,33 +29,33 @@ public class MainMenuScreen extends Screen {
 
                 if (inBounds(event, 80, 301, 629-80, 656-301)) {
                     //START GAME
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     game.setScreen(new GameScreen(game));
                 }
 
                 if (inBounds(event, 80, 679, 629 - 80, 751 - 679)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     Swarm.showDashboard();
                 }
 
                 if (inBounds(event, 653, 299, 1202 - 653, 371 - 299)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     toggleMusic();
                 }
 
                 if (inBounds(event, 653, 391, 1202 - 653, 463 - 391)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     Swarm.showAchievements();
                 }
 
                 if (inBounds(event, 653, 493, 1202 - 653, 565 - 493)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     Swarm.showLeaderboards();
                 }
 
                 if (inBounds(event, 653, 584, 1202 - 653, 656 - 584)) {
-                    Assets.click.play(1f);
-                    Swarm.showStore();
+                    Assets.clickS.play(1f);
+                    game.setScreen(new ShopScreen(game));
                 }
 
                 if (inBounds(event, 653, 679, 1202 - 653, 751 - 679)) {

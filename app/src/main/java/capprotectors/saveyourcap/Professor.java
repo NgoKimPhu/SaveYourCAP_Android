@@ -35,7 +35,7 @@ public class Professor {
 
     public void update(float d) {
         professorX += professorSpeed*(d/1.6);
-        r.set(professorX-professorWidth/2, professorY, professorX+professorWidth/2, professorY+professorHeight/2);
+        r.set(professorX - professorWidth / 2, professorY, professorX + professorWidth / 2, professorY + professorHeight / 2);
         if (r.intersect(Student.boundingBox)){
             eaten();
             die();
@@ -49,7 +49,14 @@ public class Professor {
     public void eaten() {
         if (this.getGrade().equals(grades.get(grades.size()-1)))
             game.getStudent().lostALife();
-        game.addScore(this.getScore());
+        if (this.getScore()<0 && GameScreen.getSus()>0) {
+            Assets.suedS.play(1);
+            GameScreen.addSus(-1);
+        }
+        else {
+            (this.getScore()>0?Assets.eatS:Assets.badS).play(1);
+            game.addScore(this.getScore());
+        }
         game.addStat(gradeId);
     }
 

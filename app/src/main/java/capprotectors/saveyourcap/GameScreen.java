@@ -29,6 +29,8 @@ public class GameScreen extends Screen {
 
     private static int runs = 0;
     private static int coins;
+    private static int sus = 0;
+    private static int brains = 0;
 
     public static void addSus(int d) {
         GameScreen.sus += d;
@@ -37,9 +39,6 @@ public class GameScreen extends Screen {
     public static void addBrains(int d) {
         GameScreen.brains += d;
     }
-
-    private static int sus = 0;
-    private static int brains = 0;
 
     private Background bg1, bg2;
     private Animation stuAnim, heartAnim;
@@ -71,7 +70,7 @@ public class GameScreen extends Screen {
 
     public static int screenWidth;
     public static int screenHeight;
-    Paint smallBlackPaint, bigBlackPaint, smallRedPaint, smallYellowPaint, medRedPaint, medRedPaint2, medRedPaint3, bigRedPaint, medWhiteBPaint, medWhiteBPaint2, medWhiteBPaint3, bigWhiteBPaint;
+    Paint smallBlackPaint, medBlackPaint, bigBlackPaint, smallRedPaint, smallBluePaint, medRedPaint, medRedPaint2, medRedPaint3, bigRedPaint, medWhiteBPaint, medWhiteBPaint2, medWhiteBPaint3, bigWhiteBPaint;
 
     public GameScreen(Game game) {
 
@@ -155,14 +154,16 @@ public class GameScreen extends Screen {
         smallRedPaint = new Paint(smallBlackPaint);
 
         smallBlackPaint.setColor(Color.BLACK);
+        medBlackPaint = new Paint(smallBlackPaint);
         bigBlackPaint = new Paint(smallBlackPaint);
 
         smallBlackPaint.setTextSize(30);
+        medBlackPaint.setTextSize(55);
 
         smallRedPaint.setTextSize(69);
-        smallYellowPaint = new Paint(smallRedPaint);
+        smallBluePaint = new Paint(smallRedPaint);
         smallRedPaint.setColor(Color.RED);
-        smallYellowPaint.setColor(Color.YELLOW);
+        smallBluePaint.setColor(Color.BLUE);
 
         medRedPaint.setTextSize(80);
         medRedPaint.setColor(Color.RED);
@@ -233,7 +234,7 @@ public class GameScreen extends Screen {
         // Now the updateRunning() method will be called!
 
         if (touchEvents.size() > 0) {
-            Assets.click.play(1f);
+            Assets.clickS.play(1f);
             state = GameState.Running;
         }
     }
@@ -280,6 +281,7 @@ public class GameScreen extends Screen {
                 g.drawString("x" + brains, 818, 100, medRedPaint);
                 for (Professor x:professors)
                     if (x.type == 1 && inBounds(event, x.getX() - x.getProfessorWidth() / 2 - 25, x.getY() - x.getProfessorHeight() - 25, x.getProfessorWidth() + 50, x.getProfessorHeight() + 50)) {
+                        Assets.punchS.play(1);
                         x.die();
                     }
                 /*if (event.y > screenHeight*3/4) //tap to move
@@ -294,6 +296,7 @@ public class GameScreen extends Screen {
         // 2. Check miscellaneous events like death:
 
         if (student.getLives() == 0) {
+            Assets.gmovS.play(1);
             runs+=1;
             if (Swarm.isLoggedIn())
                 Swarm.user.saveCloudData("runs", runs + "");
@@ -327,15 +330,15 @@ public class GameScreen extends Screen {
                     screenWidth+Assets.prof[0].getWidth()/2, (int) (Math.random() * 3),
                     scrollSpeed, 0, nextGrade(), deltaTime);
 
-        if (Math.random()<Math.pow(spawnChance, 2))
+        if (Math.random()<Math.pow(spawnChance, 2.3))
             spawn("Bonus", Assets.heart[0].getWidth(), Assets.heart[0].getHeight(),
                     screenWidth+Assets.heart[0].getWidth()/2, (int) (Math.random() * 3), scrollSpeed, 0, 1, deltaTime);
 
-        if (Math.random()<Math.pow(spawnChance, 2))
+        if (Math.random()<Math.pow(spawnChance, 2.1))
             spawn("Bonus", Assets.su.getWidth(), Assets.su.getHeight(),
                     screenWidth + Assets.su.getWidth() / 2, (int) (Math.random() * 3), scrollSpeed, 1, 1, deltaTime);
 
-        if (Math.random()<Math.pow(spawnChance, 2))
+        if (Math.random()<Math.pow(spawnChance, 2.2))
             spawn("Bonus", Assets.brain.getWidth(), Assets.brain.getHeight(),
                     screenWidth + Assets.brain.getWidth()/2, (int) (Math.random() * 3), scrollSpeed, 2, 1, deltaTime);
 
@@ -373,13 +376,13 @@ public class GameScreen extends Screen {
 
     private void actBrain() {
         if (brains>0){
+            Assets.brainS.play(1);
             brains-=1;
             brainTime+=5;
         }
     }
 
     private void spawn(String type, int w, int h, int x, int y, int speed, int id, int val, float d) {
-        Log.d("GameScreen/spawn", "Try : " + type + " at " + x + "," + y + "; laneCd=[" + laneCooldown[0] + "," + laneCooldown[1] + "," + laneCooldown[2] + "]");
         if (laneCooldown[y] <= 0) {
             laneCooldown[y] = -2f*w/speed/d;
             y+=1;
@@ -442,11 +445,11 @@ public class GameScreen extends Screen {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if (inBounds(event, 500, 350, 100, 100)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     resume();
                 }
                 else if (inBounds(event, 680, 350, 100, 100)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     nullify();
                     goToMenu();
                 }
@@ -460,12 +463,12 @@ public class GameScreen extends Screen {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if (inBounds(event, 500, 590, 100, 100)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     nullify();
                     game.setScreen(new GameScreen(game));
                 }
                 else if (inBounds(event, 680, 590, 100, 100)) {
-                    Assets.click.play(1f);
+                    Assets.clickS.play(1f);
                     nullify();
                     goToMenu();
                 }
@@ -489,8 +492,8 @@ public class GameScreen extends Screen {
 
             for (Professor prof : professors)
                 if (prof.getY() == i*screenHeight / 4) {
-                    g.drawImage(Assets.prof[prof.type], prof.getX() - prof.getProfessorWidth() / 2, prof.getY() - prof.getProfessorHeight() / 2);
-                    g.drawString(prof.getGrade(), prof.getX() - 80, prof.getY() - 5, prof.type<2?smallRedPaint:smallYellowPaint);
+                    g.drawImage(Assets.prof[prof.type==1?1:0], prof.getX() - prof.getProfessorWidth() / 2, prof.getY() - prof.getProfessorHeight() / 2);
+                    g.drawString(prof.getGrade(), prof.getX() - 80, prof.getY() - 5, prof.type<2?smallRedPaint: smallBluePaint);
                 }
             if (heart != null && heart.getY() == i*screenHeight / 4) {
                 g.drawImage(heartAnim.getImage(), heart.getX() - heart.getWidth() / 2, heart.getY() - heart.getHeight() / 2);
@@ -522,7 +525,6 @@ public class GameScreen extends Screen {
             drawPausedUI();
         if (state == GameState.GameOver)
             drawGameOverUI(deltaTime);
-
     }
 
     private void nullify() {
@@ -546,7 +548,7 @@ public class GameScreen extends Screen {
         smallBlackPaint = null;
         bigBlackPaint = null;
         smallRedPaint = null;
-        smallYellowPaint = null;
+        smallBluePaint = null;
         medRedPaint = null;
         medRedPaint2 = null;
         medRedPaint3 = null;
@@ -562,22 +564,25 @@ public class GameScreen extends Screen {
     private void drawReadyUI() {
         g.drawARGB(155, 255, 255, 255);
         g.drawString("Swipe to move to another lane.",
-                640, 325, smallBlackPaint);
-        g.drawString("Collect regular profs                       that give good grades.",640, 420, smallBlackPaint);
-        g.drawString("Tap to get rid of the bad profs            ",640, 530, smallBlackPaint);
-        g.drawImage(Assets.prof[0], 585, 420 - Assets.prof[0].getHeight()/2);
-        g.drawImage(Assets.prof[1], 800, 530 - Assets.prof[1].getHeight()/2);
-
+                640, 100, medBlackPaint);
+        g.drawString("Regular profs                  give good grades.", 640, 265, medBlackPaint);
+        g.drawImage(Assets.prof[0], 485, 260 - Assets.prof[0].getHeight() / 2);
+        g.drawString("Tap to get rid of bad profs               ", 660, 420, medBlackPaint);
+        g.drawImage(Assets.prof[1], 910, 425 - Assets.prof[1].getHeight() / 2);
+        g.drawString("Each            neutralizes one bad grade.", 615, 550, medBlackPaint);
+        g.drawImage(Assets.su, 275, 530 - Assets.su.getHeight() / 2);
+        g.drawString("Use        to boost brain power & get 5 straight A's.", 640, 680, medBlackPaint);
+        g.drawImage(Assets.brain, 240, 610);
     }
 
     private void drawRunningUI() {
         g.drawImage(Assets.pause, screenWidth - 118, 18);
         g.drawImage(Assets.su, 465, 0);
-        g.drawString("x" + sus, 580, 100, medWhiteBPaint);
-        g.drawString("x" + sus, 578, 100, medRedPaint);
+        g.drawString("x" + sus, 578, 100, medWhiteBPaint);
+        g.drawString("x" + sus, 580, 100, medRedPaint);
         g.drawImage(Assets.brain, 710, 18);
-        g.drawString("x" + brains, 820, 100, medWhiteBPaint);
-        g.drawString("x" + brains, 818, 100, medRedPaint);
+        g.drawString("x" + brains, 818, 100, medWhiteBPaint);
+        g.drawString("x" + brains, 820, 100, medRedPaint);
     }
 
     private void drawPausedUI() {
@@ -613,6 +618,7 @@ public class GameScreen extends Screen {
         for (;i>=0;i--,j+=60)
             if (j <= currTime && currTime < j + 60) {
                 if (i < stat.length / 2 && stat[i + 1] >= 0) {
+                    Assets.coinS.play(1);
                     coin += stat[i + 1] * (Professor.marks.get(i + 1)+2);
                     stat[i + 1] = -1;
                 }
@@ -624,8 +630,8 @@ public class GameScreen extends Screen {
                     g.drawString(stat[i] + "", 485, 510, medWhiteBPaint3);
                     g.drawString(stat[i] + "", 485, 510, medRedPaint3);
 
-                    g.drawString(stat[i] * (Professor.marks.get(i)+2) + "", 960 - (int) (j + 60 - currTime) * 4, 510, medWhiteBPaint3);
-                    g.drawString(stat[i] * (Professor.marks.get(i)+2) + "", 960 - (int) (j + 60 - currTime) * 4, 510, medRedPaint3);
+                    g.drawString(stat[i] * (Professor.marks.get(i) + 2) + "", 960 - (int) (j + 60 - currTime) * 4, 510, medWhiteBPaint3);
+                    g.drawString(stat[i] * (Professor.marks.get(i) + 2) + "", 960 - (int) (j + 60 - currTime) * 4, 510, medRedPaint3);
                 }
                 g.drawImage(Assets.prof[0], 550, 433, 0, 68, 66, 95);
                 g.drawString(Professor.grades.get(i), 585, 504, smallRedPaint);
@@ -635,17 +641,21 @@ public class GameScreen extends Screen {
             }
         if (currTime<j) return;
 
-        if (i < stat.length / 2 && stat[i + 1] >= 0) {
-            coin += stat[i + 1] * (Professor.marks.get(i + 1)+2);
-            stat[i + 1] = -1;
-        }
+        for (i=stat.length/2;i>=0;i--)
+            if (stat[i] >= 0) {
+                Assets.coinS.play(1);
+                coin += stat[i] * (Professor.marks.get(i)+2);
+                stat[i ] = -1;
+            }
 
         g.drawString(coin + "", 960, 510, medWhiteBPaint3);
         g.drawString(coin + "", 960, 510, medRedPaint3);
 
-        if (Swarm.isLoggedIn() && stat[stat.length-1]>=0) {
+        if (stat[stat.length-1]>=0) {
             stat[stat.length-1] = -1;
-            Swarm.user.saveCloudData("coin", (coins+coin) + "");
+            addCoin(coin);
+            if (Swarm.isLoggedIn())
+                Swarm.user.saveCloudData("coin", coins + "");
         }
     }
 
@@ -668,7 +678,7 @@ public class GameScreen extends Screen {
 
     @Override
     public void backButton() {
-        Assets.click.play(1f);
+        Assets.clickS.play(1f);
         if (state == GameState.Paused)
             resume();
         else if (state == GameState.GameOver) {
@@ -687,6 +697,21 @@ public class GameScreen extends Screen {
         return student;
     }
 
+    public static int getCoins() {
+        return coins;
+    }
+
+    public static int getSus() {
+        return sus;
+    }
+
+    public static int getBrains() {
+        return brains;
+    }
+
+    public static void addCoin(int d) {
+        coins += d;
+    }
     public void addScore(int dScore) {
         score += dScore;
     }
