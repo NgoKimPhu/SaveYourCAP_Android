@@ -23,9 +23,9 @@ public class Student {
         this.studentY = studentY;
     }
 
-    public void update() {
+    public void update(float d) {
         if (newMove && studentY != studentDestY) {
-            studentSpeed = (studentDestY - studentY) / 18; //TODO
+            studentSpeed = (studentDestY - studentY) / 18; //TODO need to be faster running short distances
             newMove = false;
         }
 
@@ -34,9 +34,9 @@ public class Student {
             studentY = studentDestY;
         }
         else {
-            studentY += studentSpeed;
+            studentY += studentSpeed*(d/1.6);
         }
-        boundingBox.set(studentX-studentWidth/2, studentY-studentHeight/2, studentX+studentWidth/2, studentY+studentHeight/2);
+        boundingBox.set(studentX-studentWidth/2, studentY, studentX+studentWidth/2, studentY+studentHeight/2);
     }
 
     public void moveTo(int y) {

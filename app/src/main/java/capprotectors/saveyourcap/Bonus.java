@@ -1,6 +1,7 @@
 package capprotectors.saveyourcap;
 
 import android.graphics.Rect;
+import android.util.Log;
 
 public class Bonus {
 
@@ -28,12 +29,16 @@ public class Bonus {
         this.value = value;
     }
 
-    public void update() {
-        bonusX += bonusSpeed;
+    public void update(float d) {
+        bonusX += bonusSpeed*(d/1.6);
         r.set(bonusX-bonusWidth/2, bonusY-bonusHeight/2, bonusX+bonusWidth/2, bonusY+bonusHeight/2);
         if (r.intersect(Student.boundingBox)){
             if (id==0)
                 game.getStudent().gotALife();
+            if (id==1)
+                GameScreen.addSus(1);
+            if (id==2)
+                GameScreen.addBrains(1);
             die();
         } else if (r.intersect(0, 0, 0, 800)) { // TODO: replace 800 with screenHeight
             die();

@@ -21,15 +21,23 @@ public class LoadingScreen extends Screen {
     public LoadingScreen(final Game game) {
         super(game);
         Graphics g = game.getGraphics();
+        paint(0);
 
         Assets.menu = g.newImage("menu.jpg", ImageFormat.RGB565);
         Assets.background = g.newImage("background/0.jpg", ImageFormat.RGB565);
-        Assets.pause = g.newImage("pause.png", ImageFormat.RGB565);
+        Assets.pause = g.newImage("pause.png", ImageFormat.ARGB4444);
+        Assets.resume = g.newImage("resume.png", ImageFormat.ARGB4444);
+        Assets.replay = g.newImage("replay.png", ImageFormat.ARGB4444);
+        Assets.back = g.newImage("menu.png", ImageFormat.ARGB4444);
+        Assets.coin = g.newImage("coin.png", ImageFormat.ARGB4444);
+        Assets.su = g.newImage("su.png", ImageFormat.ARGB4444);
+        Assets.brain = g.newImage("brain.png", ImageFormat.ARGB4444);
+
 //        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
         for (int i=0; i<9; i++)
             Assets.student[i] = g.newImage("student/1/"+i+".png", ImageFormat.ARGB4444);
-        for (int i=0; i<9; i++)
-            Assets.su[i] = g.newImage("bonus/su/"+i+".png", ImageFormat.ARGB4444);
+        for (int i=0; i<7; i++)
+            Assets.heart[i] = g.newImage("bonus/heart/"+i+".png", ImageFormat.ARGB4444);
         Assets.prof[0] = g.newImage("prof/regu.png", ImageFormat.ARGB4444);
         Assets.prof[1] = g.newImage("prof/bad.png", ImageFormat.ARGB4444);
 
@@ -72,7 +80,7 @@ public class LoadingScreen extends Screen {
         }
 
         if (!logging) {
-            Swarm.init((AndroidGame) game, 17981, "b3efa3ee656161523093b42ecad22ae5", swarmLoginListener);
+            Swarm.init((AndroidGame) game, SwarmConsts.App.APP_ID, SwarmConsts.App.APP_AUTH, swarmLoginListener);
             logging = true;
             ready = false;
         }

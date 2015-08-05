@@ -10,8 +10,8 @@ public class Background {
         speedX = 0;
     }
 
-    public void update() {
-        bgX += speedX;
+    public void update(float d) {
+        bgX += (int) (speedX*d/1.6);
 
         if (bgX <= -Assets.background.getWidth()){
             bgX += 2*Assets.background.getWidth();

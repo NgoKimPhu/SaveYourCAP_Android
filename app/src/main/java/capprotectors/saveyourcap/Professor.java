@@ -21,9 +21,9 @@ public class Professor {
     public int type; //0=regular and 1=bad
     public Rect r = new Rect(0, 0, 0, 0);
 
-    public Professor(GameScreen game, int professorWidth, int professorHeight, int professorX, int professorY, float professorSpeed, int gradeId) {
+    public Professor(GameScreen game, int professorWidth, int professorHeight, int professorX, int professorY, float professorSpeed, int type, int gradeId) {
         this.gradeId = gradeId;
-        this.type = (getScore()<0 && Math.random()<.2)?1:0;
+        this.type = (getScore()<0 && Math.random()<.24)?1:type;
 
         this.game = game;
         this.professorWidth = professorWidth-((type<1)?0:3);
@@ -33,22 +33,24 @@ public class Professor {
         this.professorSpeed = professorSpeed;
     }
 
-    public void update() {
-        professorX += professorSpeed;
-        r.set(professorX-professorWidth/2, professorY-professorHeight/2, professorX+professorWidth/2, professorY+professorHeight/2);
+    public void update(float d) {
+        professorX += professorSpeed*(d/1.6);
+        r.set(professorX-professorWidth/2, professorY, professorX+professorWidth/2, professorY+professorHeight/2);
         if (r.intersect(Student.boundingBox)){
-            if (this.getGrade().equals(grades.get(grades.size()-1)))
-                game.getStudent().lostALife();
-            game.addScore(this.getScore());
-            game.addStat(gradeId);
+            eaten();
             die();
-        } else if (r.intersect(-this.professorWidth, 200, -this.professorWidth, 800)) { // TODO: replace 800 with screenHeight
-            if (type == 1) {
-                game.addScore(this.getScore());
-                game.addStat(gradeId);
-            }
+        } else if (r.intersect(-this.professorWidth, 200, -this.professorWidth, GameScreen.screenHeight)) {
+            if (type == 1)
+                eaten();
             die();
         }
+    }
+
+    public void eaten() {
+        if (this.getGrade().equals(grades.get(grades.size()-1)))
+            game.getStudent().lostALife();
+        game.addScore(this.getScore());
+        game.addStat(gradeId);
     }
 
     public void die(){

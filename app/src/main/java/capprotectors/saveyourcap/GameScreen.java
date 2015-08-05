@@ -4,6 +4,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.swarmconnect.Swarm;
+import com.swarmconnect.SwarmAchievement;
+import com.swarmconnect.SwarmActiveUser.GotCloudDataCB;
 import com.swarmconnect.SwarmLeaderboard;
 
 import java.util.ArrayList;
@@ -17,27 +20,44 @@ import capprotectors.framework.Screen;
 
 public class GameScreen extends Screen {
 
+
+
     enum GameState {
         Ready, Running, Paused, GameOver
     }
-
     GameState state = GameState.Ready;
-    private Background bg1, bg2;
-    private Animation stuAnim, suAnim;
 
+    private static int runs = 0;
+    private static int coins;
+
+    public static void addSus(int d) {
+        GameScreen.sus += d;
+    }
+
+    public static void addBrains(int d) {
+        GameScreen.brains += d;
+    }
+
+    private static int sus = 0;
+    private static int brains = 0;
+
+    private Background bg1, bg2;
+    private Animation stuAnim, heartAnim;
     private Student student;
 
-    private Bonus su;
+    private Bonus heart, su, brain;
+
     public ArrayList<Professor> professors = new ArrayList<>();
     private float[] laneCooldown = new float[3]; // = [0, 0, 0]
-
     int lives = 3;
+
     // Variable Setup
     private int[] stat;
-
     private int coin;
+    private float currTime;
+    private float brainTime = 0;
+
     private int score = 0;
-    private boolean firstGGDraw;
 
     // You would create game objects here.
 
@@ -51,11 +71,46 @@ public class GameScreen extends Screen {
 
     public static int screenWidth;
     public static int screenHeight;
-    Paint paint, paint2, redBigPaint, greenMedPaint, redWhiteBorderPaint;
+    Paint smallBlackPaint, bigBlackPaint, smallRedPaint, smallYellowPaint, medRedPaint, medRedPaint2, medRedPaint3, bigRedPaint, medWhiteBPaint, medWhiteBPaint2, medWhiteBPaint3, bigWhiteBPaint;
 
     public GameScreen(Game game) {
 
         super(game);
+
+        if (Swarm.isLoggedIn()) {
+            Swarm.user.getCloudData("runs", new GotCloudDataCB() {
+                public void gotData(String data) {
+                    // Did our request fail (network offline, and not cached)? Or has this key never been set?
+                    if (data == null || data.length() == 0)
+                        data = "0";
+                    // Parse the level data for later use
+                    GameScreen.runs = Integer.parseInt(data);
+                }
+            });
+            Swarm.user.getCloudData("coin", new GotCloudDataCB() {
+                public void gotData(String data) {
+                    // Did our request fail (network offline, and not cached)? Or has this key never been set?
+                    if (data == null || data.length() == 0)
+                        data = "0";
+                    // Parse the level data for later use
+                    GameScreen.coins = Integer.parseInt(data);
+                }
+            });
+            Swarm.user.getCloudData("su", new GotCloudDataCB() {
+                public void gotData(String data) {
+                    if (data == null || data.length() == 0)
+                        data = "0";
+                    GameScreen.sus = Integer.parseInt(data);
+                }
+            });
+            Swarm.user.getCloudData("brain", new GotCloudDataCB() {
+                public void gotData(String data) {
+                    if (data == null || data.length() == 0)
+                        data = "0";
+                    GameScreen.brains = Integer.parseInt(data);
+                }
+            });
+        }
 
         screenWidth = g.getWidth();
         screenHeight = g.getHeight();
@@ -73,15 +128,14 @@ public class GameScreen extends Screen {
         for (int i=6; i>=0; i--)
             stuAnim.addFrame(Assets.student[i], 50);
 
-        suAnim = new Animation();
-        for (int i=0; i<9; i++)
-            suAnim.addFrame(Assets.su[i], 40);
+        heartAnim = new Animation();
+        for (int i=0; i<7; i++)
+            heartAnim.addFrame(Assets.heart[i], 40);
 
         if (Professor.grades.size()<1) {
             loadRaw();
         }
         stat = new int[Professor.grades.size()];
-        firstGGDraw = true;
 
         if (biggerGradeChance == null) {
             biggerGradeChance = new float[Professor.grades.size()];
@@ -93,37 +147,51 @@ public class GameScreen extends Screen {
             Log.i("Grades up chance from ", i+": "+biggerGradeChance[i]);
         */
         // Defining a paint object
-        paint = new Paint();
-        paint.setTextSize(30);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
+        smallBlackPaint = new Paint();
+        smallBlackPaint.setAntiAlias(true);
+        medRedPaint = new Paint(smallBlackPaint);
 
-        paint2 = new Paint();
-        paint2.setTextSize(100);
-        paint2.setTextAlign(Paint.Align.CENTER);
-        paint2.setAntiAlias(true);
-        paint2.setColor(Color.WHITE);
+        smallBlackPaint.setTextAlign(Paint.Align.CENTER);
+        smallRedPaint = new Paint(smallBlackPaint);
 
-        redBigPaint = new Paint();
-        redBigPaint.setTextSize(90);
-        redBigPaint.setTextAlign(Paint.Align.LEFT);
-        redBigPaint.setTextScaleX(.8f);
-        redBigPaint.setAntiAlias(true);
+        smallBlackPaint.setColor(Color.BLACK);
+        bigBlackPaint = new Paint(smallBlackPaint);
 
-        greenMedPaint = new Paint();
-        greenMedPaint.setTextSize(69);
-        greenMedPaint.setTextAlign(Paint.Align.CENTER);
-        greenMedPaint.setAntiAlias(true);
-        greenMedPaint.setColor(Color.GREEN);
-        redBigPaint.setColor(Color.RED);
+        smallBlackPaint.setTextSize(30);
 
-        redWhiteBorderPaint = new Paint();
-        redWhiteBorderPaint.setTextSize(100);
-        redWhiteBorderPaint.setTextAlign(Paint.Align.CENTER);
-        redWhiteBorderPaint.setAntiAlias(true);
-        redWhiteBorderPaint.setColor(Color.RED);
-        redWhiteBorderPaint.setStrokeWidth(4f);
+        smallRedPaint.setTextSize(69);
+        smallYellowPaint = new Paint(smallRedPaint);
+        smallRedPaint.setColor(Color.RED);
+        smallYellowPaint.setColor(Color.YELLOW);
+
+        medRedPaint.setTextSize(80);
+        medRedPaint.setColor(Color.RED);
+        medRedPaint2 = new Paint(medRedPaint);
+        medRedPaint3 = new Paint(medRedPaint);
+        medRedPaint.setTextAlign(Paint.Align.LEFT);
+        medRedPaint.setTextScaleX(.9f);
+
+        medRedPaint2.setTextAlign(Paint.Align.CENTER);
+        medRedPaint3.setTextAlign(Paint.Align.RIGHT);
+
+        bigBlackPaint.setTextSize(100);
+        bigRedPaint = new Paint(bigBlackPaint);
+        bigWhiteBPaint = new Paint(bigBlackPaint);
+        bigBlackPaint.setTextAlign(Paint.Align.RIGHT);
+
+        bigRedPaint.setColor(Color.RED);
+
+        bigWhiteBPaint.setColor(Color.WHITE);
+        bigWhiteBPaint.setStyle(Paint.Style.STROKE);
+        bigWhiteBPaint.setStrokeWidth(9f);
+
+        medWhiteBPaint2 = new Paint(bigWhiteBPaint);
+        medWhiteBPaint2.setTextSize(80);
+        medWhiteBPaint = new Paint(medWhiteBPaint2);
+        medWhiteBPaint.setTextAlign(Paint.Align.LEFT);
+        medWhiteBPaint3 = new Paint(medWhiteBPaint);
+        medWhiteBPaint.setStrokeWidth(4f);
+        medWhiteBPaint3.setTextAlign(Paint.Align.RIGHT);
     }
 
     private void loadRaw() {
@@ -142,6 +210,10 @@ public class GameScreen extends Screen {
         // Depending on the state of the game, we call different update methods.
         // Refer to Unit 3's code. We did a similar thing without separating the
         // update methods.
+
+        if (deltaTime > 3.15){ // safe cap to prevent major glitch during frame drops
+            deltaTime = (float) 3.15;
+        }
 
         if (state == GameState.Ready)
             updateReady(touchEvents);
@@ -177,25 +249,39 @@ public class GameScreen extends Screen {
             TouchEvent event = touchEvents.get(i);
 
             if (event.type == TouchEvent.SWIPE_UP) {
-                if (student.getY() > screenHeight/2)
+                if (student.getY() > screenHeight/2 + screenHeight/7)
                     student.moveTo(2);
                 else if (student.getY() > screenHeight/4)
                     student.moveTo(1);
                 break;
             }
             else if (event.type == TouchEvent.SWIPE_DOWN) {
-                if (student.getY() < screenHeight/2)
+                if (student.getY() < screenHeight/2 - screenHeight/7)
                     student.moveTo(2);
                 else if (student.getY() < screenHeight*3/4)
                     student.moveTo(3);
                 break;
             }
             else if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.x > screenWidth-118 && event.y < 118)
+                if (inBounds(event, screenWidth-118, 18, 100, 100))
                     pause();
+//                if (inBounds(event, 460, 0, 245, 145))
+//                    pause();
+                if (inBounds(event, 705, 13, 270, 138))
+                    actBrain();
+
+                if (event.x < 20 && event.y < 20) //debug
+                    student.lostALife();
+                g.drawImage(Assets.su, 465, 0);
+                g.drawString("x" + sus, 580, 100, medWhiteBPaint);
+                g.drawString("x" + sus, 578, 100, medRedPaint);
+                g.drawImage(Assets.brain, 710, 18);
+                g.drawString("x" + brains, 820, 100, medWhiteBPaint);
+                g.drawString("x" + brains, 818, 100, medRedPaint);
                 for (Professor x:professors)
-                    if (x.type == 1 && x.r.contains(event.x, event.y))
+                    if (x.type == 1 && inBounds(event, x.getX() - x.getProfessorWidth() / 2 - 25, x.getY() - x.getProfessorHeight() - 25, x.getProfessorWidth() + 50, x.getProfessorHeight() + 50)) {
                         x.die();
+                    }
                 /*if (event.y > screenHeight*3/4) //tap to move
                     student.moveTo(3);
                 else if (event.y > screenHeight/2)
@@ -207,14 +293,30 @@ public class GameScreen extends Screen {
 
         // 2. Check miscellaneous events like death:
 
-        if (student.getLives() < 1) {
+        if (student.getLives() == 0) {
+            runs+=1;
+            if (Swarm.isLoggedIn())
+                Swarm.user.saveCloudData("runs", runs + "");
+            Log.d("GameScreen", score+" "+student.getLives());
+            SwarmLeaderboard.submitScore(SwarmConsts.Leaderboard.CAP_SAVIORS_ID, score);
+            if (runs == 1)
+                SwarmAchievement.unlock(SwarmConsts.Achievement.FIRST_RUN_ID);
+            if (runs == 20)
+                SwarmAchievement.unlock(SwarmConsts.Achievement.HARDWORKING_GUY_ID);
+            if (score<0)
+                SwarmAchievement.unlock(SwarmConsts.Achievement.SUPER_SLACK_ID);
+            if (score>100)
+                SwarmAchievement.unlock(SwarmConsts.Achievement.NICE_PROGRESS_ID);
+            if (score>200)
+                SwarmAchievement.unlock(SwarmConsts.Achievement.DEANS_LISTERS_ID);
+            currTime = 0;
+            student.lostALife();
             state = GameState.GameOver;
         }
 
-
         // 3. Call individual update() methods here.
         // This is where all the game updates happen.
-        student.update();
+        student.update(deltaTime);
 
         while (score - difficulty > 50) {
             increaseDifficulty();
@@ -222,12 +324,20 @@ public class GameScreen extends Screen {
 
         if (Math.random()<spawnChance)
             spawn("Prof", Assets.prof[0].getWidth(), Assets.prof[0].getHeight(),
-                    screenWidth+Assets.prof[0].getWidth()/2, (int) (Math.random()*3),
-                    scrollSpeed, 0, nextGrade());
+                    screenWidth+Assets.prof[0].getWidth()/2, (int) (Math.random() * 3),
+                    scrollSpeed, 0, nextGrade(), deltaTime);
 
         if (Math.random()<Math.pow(spawnChance, 2))
-            spawn("Bonus", Assets.su[0].getWidth(), Assets.su[0].getHeight(),
-                    screenWidth+Assets.su[0].getWidth()/2, (int) (Math.random()*3), scrollSpeed, 0, 1);
+            spawn("Bonus", Assets.heart[0].getWidth(), Assets.heart[0].getHeight(),
+                    screenWidth+Assets.heart[0].getWidth()/2, (int) (Math.random() * 3), scrollSpeed, 0, 1, deltaTime);
+
+        if (Math.random()<Math.pow(spawnChance, 2))
+            spawn("Bonus", Assets.su.getWidth(), Assets.su.getHeight(),
+                    screenWidth + Assets.su.getWidth() / 2, (int) (Math.random() * 3), scrollSpeed, 1, 1, deltaTime);
+
+        if (Math.random()<Math.pow(spawnChance, 2))
+            spawn("Bonus", Assets.brain.getWidth(), Assets.brain.getHeight(),
+                    screenWidth + Assets.brain.getWidth()/2, (int) (Math.random() * 3), scrollSpeed, 2, 1, deltaTime);
 
         for (int i = 0; i < laneCooldown.length; i++)
             if (laneCooldown[i]>0)
@@ -239,36 +349,65 @@ public class GameScreen extends Screen {
                 professors.remove(i);
             }
             else {
-                professor.update();
+                professor.update(deltaTime);
             }
         }
 
-        if (su!=null)
+        if (heart !=null)
+            if (heart.isDead())
+                heart = null;
+            else heart.update(deltaTime);
+        if (su !=null)
             if (su.isDead())
                 su = null;
-            else su.update();
+            else su.update(deltaTime);
+        if (brain !=null)
+            if (brain.isDead())
+                brain = null;
+            else brain.update(deltaTime);
 
-        bg1.update();
-        bg2.update();
-        animate();
+        bg1.update(deltaTime);
+        bg2.update(deltaTime);
+        animate(deltaTime);
     }
 
-    private void spawn(String type, int w, int h, int x, int y, int speed, int id, int val) {
-        if (laneCooldown[y] <= 0) {
-            laneCooldown[y] = -1.2f*w/speed;
-            y+=1;
-            if (type.equals("Prof"))
-                professors.add(new Professor(this, w, h, x, y*screenHeight/4, speed, val));
-            else if (type.equals("Bonus"))
-                if (id == 0) // SU
-                    if (su == null)
-                        su = new Bonus(this, x, y*screenHeight/4, speed, id, val);
+    private void actBrain() {
+        if (brains>0){
+            brains-=1;
+            brainTime+=5;
         }
     }
 
-    private void animate() {
-        stuAnim.update(10);
-        suAnim.update(10);
+    private void spawn(String type, int w, int h, int x, int y, int speed, int id, int val, float d) {
+        Log.d("GameScreen/spawn", "Try : " + type + " at " + x + "," + y + "; laneCd=[" + laneCooldown[0] + "," + laneCooldown[1] + "," + laneCooldown[2] + "]");
+        if (laneCooldown[y] <= 0) {
+            laneCooldown[y] = -2f*w/speed/d;
+            y+=1;
+            if (type.equals("Prof")) {
+                if (brainTime>0) {
+                    brainTime-=1;
+                    id = 2;
+                    val = Math.random()<.5?0:1;
+                }
+                professors.add(new Professor(this, w, h, x, y*screenHeight/4, speed, id, val));
+            }
+            else if (type.equals("Bonus")) {
+                if (id == 0) // Heart
+                    if (heart == null)
+                        heart = new Bonus(this, x, y * screenHeight / 4, speed, id, val);
+                if (id == 1) // SU
+                    if (su == null)
+                        su = new Bonus(this, x, y * screenHeight / 4, speed, id, val);
+                if (id == 2) // Brain
+                    if (brain == null)
+                        brain = new Bonus(this, x, y * screenHeight / 4, speed, id, val);
+            }
+        }
+    }
+
+    private void animate(float d) {
+        stuAnim.update((long) (13 * d / 1.6));
+        heartAnim.update((long) (13 * d / 1.6));
     }
 
     private void increaseDifficulty() {
@@ -302,12 +441,11 @@ public class GameScreen extends Screen {
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if (inBounds(event, screenWidth/4, screenHeight/4, screenWidth/2, screenHeight/4)) {
+                if (inBounds(event, 500, 350, 100, 100)) {
                     Assets.click.play(1f);
                     resume();
                 }
-
-                if (inBounds(event, screenWidth/4, screenHeight/2, screenWidth/2, screenHeight/4)) {
+                else if (inBounds(event, 680, 350, 100, 100)) {
                     Assets.click.play(1f);
                     nullify();
                     goToMenu();
@@ -321,16 +459,17 @@ public class GameScreen extends Screen {
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if (inBounds(event, 0, 0, 1280, 400)) {
-                    Assets.click.play(.85f);
+                if (inBounds(event, 500, 590, 100, 100)) {
+                    Assets.click.play(1f);
+                    nullify();
+                    game.setScreen(new GameScreen(game));
+                }
+                else if (inBounds(event, 680, 590, 100, 100)) {
+                    Assets.click.play(1f);
                     nullify();
                     goToMenu();
-                    return;
                 }
-                if (inBounds(event, 0, 400, 1280, 400)) {
-                    Assets.click.play(.85f);
-                    SwarmLeaderboard.submitScoreAndShowLeaderboard(19727, score);
-                }
+                else currTime = 99999;
             }
         }
 
@@ -339,26 +478,42 @@ public class GameScreen extends Screen {
     @Override
     public void paint(float deltaTime) {
 
-        if (firstGGDraw) {
-            g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
-            g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
+        g.drawImage(Assets.background, bg1.getBgX(), bg1.getBgY());
+        g.drawImage(Assets.background, bg2.getBgX(), bg2.getBgY());
 
-            g.drawImage(stuAnim.getImage(), student.getX() - student.getWidth() / 2, student.getY() - student.getHeight() / 2);
-            for (Professor professor : professors) {
-                g.drawImage(Assets.prof[professor.type], professor.getX() - professor.getProfessorWidth() / 2, professor.getY() - professor.getProfessorHeight() / 2);
-                g.drawString(professor.getGrade(), professor.getX()-58, professor.getY()-2, greenMedPaint);
+        for (int i=1; i<4; i++) {
+            if ((i-1)*screenHeight / 4 < student.getY() && student.getY() <= i*screenHeight / 4)
+//                g.drawImage(stuAnim.getImage(), student.getX() - student.getWidth() / 2, student.getY() - student.getHeight() / 2);
+                g.drawScaledImage(stuAnim.getImage(), student.getX() - student.getWidth() * 3 / 4, student.getY() - student.getHeight() * 3 / 4,
+                        student.getWidth() * 3 / 2, student.getHeight() * 3 / 2, 0, 0, student.getWidth(), student.getHeight());
+
+            for (Professor prof : professors)
+                if (prof.getY() == i*screenHeight / 4) {
+                    g.drawImage(Assets.prof[prof.type], prof.getX() - prof.getProfessorWidth() / 2, prof.getY() - prof.getProfessorHeight() / 2);
+                    g.drawString(prof.getGrade(), prof.getX() - 80, prof.getY() - 5, prof.type<2?smallRedPaint:smallYellowPaint);
+                }
+            if (heart != null && heart.getY() == i*screenHeight / 4) {
+                g.drawImage(heartAnim.getImage(), heart.getX() - heart.getWidth() / 2, heart.getY() - heart.getHeight() / 2);
             }
-            if (su != null)
-                g.drawImage(suAnim.getImage(), su.getX() - su.getWidth() / 2, su.getY() - su.getHeight() / 2);
-
-            String hearts = "";
-            for (int i = 0; i < student.getLives(); i++) hearts += "♥";
-            g.drawString(hearts, 50, 100, redBigPaint);
-            g.drawString(score + "", screenWidth - 200, 100, paint2);
+            if (su != null && su.getY() == i*screenHeight / 4) {
+                g.drawImage(Assets.su, su.getX() - su.getWidth() / 2, su.getY() - su.getHeight() / 2);
+            }
+            if (brain != null && brain.getY() == i*screenHeight / 4) {
+                g.drawImage(Assets.brain, brain.getX() - brain.getWidth() / 2, brain.getY() - brain.getHeight() / 2);
+            }
         }
-        g.drawString("FPS:"+((int) (100/deltaTime)), 60, screenHeight-25, paint); //TODO option to show/hide in setting
+
+        String hearts = "";
+        for (int i = 0; i < student.getLives(); i++) hearts += "♥";
+        g.drawString(hearts, 35, 100, medRedPaint);
+        g.drawString(score + "", screenWidth - 140, 105, bigBlackPaint);
+
+        g.drawString("FPS:"+((int) (100/deltaTime)), 60, screenHeight-25, smallBlackPaint); //TODO option to show/hide in setting
 
         // Secondly, draw the UI above the game elements.
+        if (deltaTime > 3.15){ // safe cap to prevent major glitch during frame drops
+            deltaTime = 3.15f;
+        }
         if (state == GameState.Ready)
             drawReadyUI();
         if (state == GameState.Running)
@@ -366,70 +521,131 @@ public class GameScreen extends Screen {
         if (state == GameState.Paused)
             drawPausedUI();
         if (state == GameState.GameOver)
-            drawGameOverUI();
+            drawGameOverUI(deltaTime);
 
     }
 
     private void nullify() {
-
+        if (Swarm.isLoggedIn()) {
+            Swarm.user.saveCloudData("su", sus + "");
+            Swarm.user.saveCloudData("brain", brains + "");
+        }
         // Set all variables to null. You will be recreating them in the
         // constructor.
         bg1 = null;
         bg2 = null;
         stuAnim = null;
-        suAnim = null;
+        heartAnim = null;
         student = null;
+        heart = null;
         su = null;
+        brain = null;
         professors = null;
         laneCooldown = null;
         stat = null;
-        paint = null;
-        paint2= null;
-        redBigPaint = null;
-        greenMedPaint = null;
+        smallBlackPaint = null;
+        bigBlackPaint = null;
+        smallRedPaint = null;
+        smallYellowPaint = null;
+        medRedPaint = null;
+        medRedPaint2 = null;
+        medRedPaint3 = null;
+        bigRedPaint = null;
+        medWhiteBPaint = null;
+        medWhiteBPaint2 = null;
+        medWhiteBPaint3 = null;
+        bigWhiteBPaint = null;
         // Call garbage collector to clean up memory.
         System.gc();
     }
 
     private void drawReadyUI() {
-        g.drawARGB(155, 0, 0, 0);
+        g.drawARGB(155, 255, 255, 255);
         g.drawString("Swipe to move to another lane.",
-                640, 330, paint);
-        g.drawString("Collect regular profs                    that give good grades.",640, 420, paint);
-        g.drawString("Tap to get rid of the bad profs            ",640, 515, paint);
-        g.drawImage(Assets.prof[0], 600, 420 - Assets.prof[0].getHeight()/2);
-        g.drawImage(Assets.prof[1], 800, 515 - Assets.prof[0].getHeight()/2);
+                640, 325, smallBlackPaint);
+        g.drawString("Collect regular profs                       that give good grades.",640, 420, smallBlackPaint);
+        g.drawString("Tap to get rid of the bad profs            ",640, 530, smallBlackPaint);
+        g.drawImage(Assets.prof[0], 585, 420 - Assets.prof[0].getHeight()/2);
+        g.drawImage(Assets.prof[1], 800, 530 - Assets.prof[1].getHeight()/2);
 
     }
 
     private void drawRunningUI() {
         g.drawImage(Assets.pause, screenWidth - 118, 18);
+        g.drawImage(Assets.su, 465, 0);
+        g.drawString("x" + sus, 580, 100, medWhiteBPaint);
+        g.drawString("x" + sus, 578, 100, medRedPaint);
+        g.drawImage(Assets.brain, 710, 18);
+        g.drawString("x" + brains, 820, 100, medWhiteBPaint);
+        g.drawString("x" + brains, 818, 100, medRedPaint);
     }
 
     private void drawPausedUI() {
+        drawRunningUI();
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Resume", screenWidth/2, screenHeight*3/8, paint2);
-        g.drawString("Menu", screenWidth / 2, screenHeight*5/8, paint2);
+        g.drawImage(Assets.resume, 500, 350);
+        g.drawImage(Assets.back, 680, 350);
     }
 
-    private void drawGameOverUI() {
-        if (firstGGDraw) {
-            g.drawARGB(155, 0, 0, 0);
-            g.drawString("GAME OVER.", 640, 150, paint2);
-            firstGGDraw = false;
+    private void drawGameOverUI(float d) {
+        currTime+=d;
+
+        g.drawARGB(155, 0, 0, 0);
+        if (currTime<10) return;
+
+        g.drawString("Game Over", 640, 200, bigWhiteBPaint);
+        g.drawString("Game Over", 640, 200, bigRedPaint);
+        if (currTime<20) return;
+
+        g.drawString("Your Score: " + score, 640, 370, medWhiteBPaint2);
+        g.drawString("Your Score: " + score, 640, 370, medRedPaint2);
+
+        g.drawImage(Assets.replay, 500, 590);
+        g.drawImage(Assets.back, 680, 590);
+        if (currTime<30) return;
+
+        g.drawString("+", 730, 510, medWhiteBPaint2);
+        g.drawString("+", 730, 510, medRedPaint2);
+        g.drawImage(Assets.coin, 975, 440);
+
+        int i = stat.length/2;
+        int j=30;
+        for (;i>=0;i--,j+=60)
+            if (j <= currTime && currTime < j + 60) {
+                if (i < stat.length / 2 && stat[i + 1] >= 0) {
+                    coin += stat[i + 1] * (Professor.marks.get(i + 1)+2);
+                    stat[i + 1] = -1;
+                }
+                if (j <= currTime && currTime < j + 30) {
+                    g.drawString(stat[i] + "", 485, 510 - 30 - j + (int) currTime, medWhiteBPaint3);
+                    g.drawString(stat[i] + "", 485, 510 - 30 - j + (int) currTime, medRedPaint3);
+
+                } else {
+                    g.drawString(stat[i] + "", 485, 510, medWhiteBPaint3);
+                    g.drawString(stat[i] + "", 485, 510, medRedPaint3);
+
+                    g.drawString(stat[i] * (Professor.marks.get(i)+2) + "", 960 - (int) (j + 60 - currTime) * 4, 510, medWhiteBPaint3);
+                    g.drawString(stat[i] * (Professor.marks.get(i)+2) + "", 960 - (int) (j + 60 - currTime) * 4, 510, medRedPaint3);
+                }
+                g.drawImage(Assets.prof[0], 550, 433, 0, 68, 66, 95);
+                g.drawString(Professor.grades.get(i), 585, 504, smallRedPaint);
+
+                g.drawString(coin + "", 960, 510, medWhiteBPaint3);
+                g.drawString(coin + "", 960, 510, medRedPaint3);
+            }
+        if (currTime<j) return;
+
+        if (i < stat.length / 2 && stat[i + 1] >= 0) {
+            coin += stat[i + 1] * (Professor.marks.get(i + 1)+2);
+            stat[i + 1] = -1;
         }
-        int i = 0;
-        while (stat[i]<0 && i<stat.length-1) i++;
-        if (stat[i]>-1) {
-            g.drawString(Professor.grades.get(i)+": "+stat[i]+", coin +="+stat[i]+"x"+(stat.length-1-i), 120, 64 + 64 * i, paint);
-            coin += stat[i] * (stat.length-1-i);
-            g.drawRect(1080, 360, 1240, 440, Color.BLACK);
-            g.drawString(coin+"", 1160, 400, paint);
-            stat[i] = -1;
-        }
-        else {
-            g.drawString("Tap to return", 640, 290, paint);
-            g.drawString("Submit score?", 640, 460, paint);
+
+        g.drawString(coin + "", 960, 510, medWhiteBPaint3);
+        g.drawString(coin + "", 960, 510, medRedPaint3);
+
+        if (Swarm.isLoggedIn() && stat[stat.length-1]>=0) {
+            stat[stat.length-1] = -1;
+            Swarm.user.saveCloudData("coin", (coins+coin) + "");
         }
     }
 
@@ -452,7 +668,7 @@ public class GameScreen extends Screen {
 
     @Override
     public void backButton() {
-        Assets.click.play(.85f);
+        Assets.click.play(1f);
         if (state == GameState.Paused)
             resume();
         else if (state == GameState.GameOver) {
