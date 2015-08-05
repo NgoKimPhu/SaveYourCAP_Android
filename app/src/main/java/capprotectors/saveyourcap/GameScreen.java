@@ -563,14 +563,14 @@ public class GameScreen extends Screen {
         g.drawARGB(155, 255, 255, 255);
         g.drawString("Swipe to move to another lane.",
                 640, 100, medBlackPaint);
-        g.drawString("Regular profs                  give good grades.", 640, 265, medBlackPaint);
-        g.drawImage(Assets.prof[0], 485, 260 - Assets.prof[0].getHeight() / 2);
-        g.drawString("Tap to get rid of bad profs               ", 660, 420, medBlackPaint);
+        g.drawString("Regular profs                  give good grades.", 640, 262, medBlackPaint);
+        g.drawImage(Assets.prof[0], 480, 250 - Assets.prof[0].getHeight() / 2);
+        g.drawString("Tap to get rid of bad profs               ", 670, 420, medBlackPaint);
         g.drawImage(Assets.prof[1], 910, 425 - Assets.prof[1].getHeight() / 2);
         g.drawString("Each            neutralizes one bad grade.", 615, 550, medBlackPaint);
         g.drawImage(Assets.su, 275, 530 - Assets.su.getHeight() / 2);
         g.drawString("Use        to boost brain power & get 5 straight A's.", 640, 680, medBlackPaint);
-        g.drawImage(Assets.brain, 240, 610);
+        g.drawImage(Assets.brain, 120, 610);
     }
 
     private void drawRunningUI() {
