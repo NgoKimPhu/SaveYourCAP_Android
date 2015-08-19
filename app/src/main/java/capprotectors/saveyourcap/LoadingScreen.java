@@ -31,10 +31,9 @@ public class LoadingScreen extends Screen {
         Assets.replay = g.newImage("replay.png", ImageFormat.ARGB4444);
         Assets.back = g.newImage("menu.png", ImageFormat.ARGB4444);
         Assets.coin = g.newImage("coin.png", ImageFormat.ARGB4444);
-        Assets.su = g.newImage("su.png", ImageFormat.ARGB4444);
-        Assets.brain = g.newImage("brain.png", ImageFormat.ARGB4444);
+        Assets.su = g.newImage("bonus/su.png", ImageFormat.ARGB4444);
+        Assets.brain = g.newImage("bonus/brain.png", ImageFormat.ARGB4444);
 
-//        Assets.student = g.newImage("student.jpg", ImageFormat.ARGB4444);
         for (int i=0; i<9; i++)
             Assets.student[i] = g.newImage("student/2/"+i+".png", ImageFormat.ARGB4444);
         for (int i=0; i<7; i++)

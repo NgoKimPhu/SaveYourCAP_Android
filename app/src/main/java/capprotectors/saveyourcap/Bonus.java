@@ -10,14 +10,15 @@ public class Bonus {
 
     private int bonusX;
     private int bonusY;
+
     private float bonusSpeed;
 
     private boolean dead = false;
 
     private int bonusWidth = 80;
+
     private int bonusHeight = 80;
     private int id;
-
     private int value;
 
     public Bonus(GameScreen game, int bonusX, int bonusY, float bonusSpeed, int id, int value) {
@@ -67,5 +68,9 @@ public class Bonus {
 
     public int getHeight() {
         return bonusHeight;
+    }
+
+    public void setBonusSpeed(float bonusSpeed) {
+        this.bonusSpeed = bonusSpeed;
     }
 }

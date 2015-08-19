@@ -12,15 +12,16 @@ public class Professor {
     private int professorHeight;
     private int professorX; //center
     private int professorY;
+
     private float professorSpeed;
+
     private boolean dead = false;
     private int gradeId;
-
     private GameScreen game;
 
     public int type; //0=regular and 1=bad
-    public Rect r = new Rect(0, 0, 0, 0);
 
+    public Rect r = new Rect(0, 0, 0, 0);
     public Professor(GameScreen game, int professorWidth, int professorHeight, int professorX, int professorY, float professorSpeed, int type, int gradeId) {
         this.gradeId = gradeId;
         this.type = (getScore()<0 && Math.random()<.24)?1:type;
@@ -54,7 +55,7 @@ public class Professor {
             GameScreen.addSus(-1);
         }
         else {
-            (this.getScore()>0?Assets.eatS:Assets.badS).play(1);
+            (this.getScore()>=0?Assets.eatS:Assets.badS).play(1);
             game.addScore(this.getScore());
         }
         game.addStat(gradeId);
@@ -83,10 +84,14 @@ public class Professor {
     public boolean isDead() {
         return dead;
     }
-    
+
     public String getGrade() {return grades.get(gradeId);}
 
     public int getScore() {
         return marks.get(gradeId);
+    }
+
+    public void setProfessorSpeed(float professorSpeed) {
+        this.professorSpeed = professorSpeed;
     }
 }

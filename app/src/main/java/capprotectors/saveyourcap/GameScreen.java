@@ -20,8 +20,6 @@ import capprotectors.framework.Screen;
 
 public class GameScreen extends Screen {
 
-
-
     enum GameState {
         Ready, Running, Paused, GameOver
     }
@@ -266,30 +264,15 @@ public class GameScreen extends Screen {
             else if (event.type == TouchEvent.TOUCH_UP) {
                 if (inBounds(event, screenWidth-118, 18, 100, 100))
                     pause();
-//                if (inBounds(event, 460, 0, 245, 145))
-//                    pause();
                 if (inBounds(event, 705, 13, 270, 138))
                     actBrain();
-
                 if (event.x < 20 && event.y < 20) //debug
                     student.lostALife();
-                g.drawImage(Assets.su, 465, 0);
-                g.drawString("x" + sus, 580, 100, medWhiteBPaint);
-                g.drawString("x" + sus, 578, 100, medRedPaint);
-                g.drawImage(Assets.brain, 710, 18);
-                g.drawString("x" + brains, 820, 100, medWhiteBPaint);
-                g.drawString("x" + brains, 818, 100, medRedPaint);
                 for (Professor x:professors)
                     if (x.type == 1 && inBounds(event, x.getX() - x.getProfessorWidth() / 2 - 25, x.getY() - x.getProfessorHeight() - 25, x.getProfessorWidth() + 50, x.getProfessorHeight() + 50)) {
                         Assets.punchS.play(1);
                         x.die();
                     }
-                /*if (event.y > screenHeight*3/4) //tap to move
-                    student.moveTo(3);
-                else if (event.y > screenHeight/2)
-                    student.moveTo(2);
-                else if (event.y > screenHeight/4)
-                    student.moveTo(1);*/
             }
         }
 
@@ -298,20 +281,26 @@ public class GameScreen extends Screen {
         if (student.getLives() == 0) {
             Assets.gmovS.play(1);
             runs+=1;
-            if (Swarm.isLoggedIn())
+            if (Swarm.isLoggedIn()) {
                 Swarm.user.saveCloudData("runs", runs + "");
-            Log.d("GameScreen", score+" "+student.getLives());
+            }
+            Log.d("GameScreen", score + " " + student.getLives());
             SwarmLeaderboard.submitScore(SwarmConsts.Leaderboard.CAP_SAVIORS_ID, score);
-            if (runs == 1)
+            if (runs == 1) {
                 SwarmAchievement.unlock(SwarmConsts.Achievement.FIRST_RUN_ID);
-            if (runs == 20)
+            }
+            if (runs == 20) {
                 SwarmAchievement.unlock(SwarmConsts.Achievement.HARDWORKING_GUY_ID);
-            if (score<0)
+            }
+            if (score<0) {
                 SwarmAchievement.unlock(SwarmConsts.Achievement.SUPER_SLACK_ID);
-            if (score>100)
+            }
+            if (score>100) {
                 SwarmAchievement.unlock(SwarmConsts.Achievement.NICE_PROGRESS_ID);
-            if (score>200)
+            }
+            if (score>200) {
                 SwarmAchievement.unlock(SwarmConsts.Achievement.DEANS_LISTERS_ID);
+            }
             currTime = 0;
             student.lostALife();
             state = GameState.GameOver;
@@ -321,30 +310,35 @@ public class GameScreen extends Screen {
         // This is where all the game updates happen.
         student.update(deltaTime);
 
-        while (score - difficulty > 50) {
+        while (score - difficulty > 28) {
             increaseDifficulty();
         }
 
-        if (Math.random()<spawnChance)
+        if (Math.random()<spawnChance) {
             spawn("Prof", Assets.prof[0].getWidth(), Assets.prof[0].getHeight(),
-                    screenWidth+Assets.prof[0].getWidth()/2, (int) (Math.random() * 3),
+                    screenWidth + Assets.prof[0].getWidth() / 2, (int) (Math.random() * 3),
                     scrollSpeed, 0, nextGrade(), deltaTime);
+        }
 
-        if (Math.random()<Math.pow(spawnChance, 2.3))
+        if (Math.random()<Math.pow(spawnChance, 2.3)) {
             spawn("Bonus", Assets.heart[0].getWidth(), Assets.heart[0].getHeight(),
-                    screenWidth+Assets.heart[0].getWidth()/2, (int) (Math.random() * 3), scrollSpeed, 0, 1, deltaTime);
+                    screenWidth + Assets.heart[0].getWidth() / 2, (int) (Math.random() * 3), scrollSpeed, 0, 1, deltaTime);
+        }
 
-        if (Math.random()<Math.pow(spawnChance, 2.1))
+        if (Math.random()<Math.pow(spawnChance, 2.1)) {
             spawn("Bonus", Assets.su.getWidth(), Assets.su.getHeight(),
                     screenWidth + Assets.su.getWidth() / 2, (int) (Math.random() * 3), scrollSpeed, 1, 1, deltaTime);
+        }
 
-        if (Math.random()<Math.pow(spawnChance, 2.2))
+        if (Math.random()<Math.pow(spawnChance, 2.2)) {
             spawn("Bonus", Assets.brain.getWidth(), Assets.brain.getHeight(),
-                    screenWidth + Assets.brain.getWidth()/2, (int) (Math.random() * 3), scrollSpeed, 2, 1, deltaTime);
+                    screenWidth + Assets.brain.getWidth() / 2, (int) (Math.random() * 3), scrollSpeed, 2, 1, deltaTime);
+        }
 
         for (int i = 0; i < laneCooldown.length; i++)
-            if (laneCooldown[i]>0)
+            if (laneCooldown[i]>0) {
                 laneCooldown[i] -= deltaTime;
+            }
 
         for (int i = professors.size()-1; i>=0; i--) {
             Professor professor = professors.get(i);
@@ -356,18 +350,24 @@ public class GameScreen extends Screen {
             }
         }
 
-        if (heart !=null)
-            if (heart.isDead())
+        if (heart !=null) {
+            if (heart.isDead()) {
                 heart = null;
+            }
             else heart.update(deltaTime);
-        if (su !=null)
-            if (su.isDead())
+        }
+        if (su !=null) {
+            if (su.isDead()) {
                 su = null;
+            }
             else su.update(deltaTime);
-        if (brain !=null)
-            if (brain.isDead())
+        }
+        if (brain !=null) {
+            if (brain.isDead()) {
                 brain = null;
+            }
             else brain.update(deltaTime);
+        }
 
         bg1.update(deltaTime);
         bg2.update(deltaTime);
@@ -414,7 +414,7 @@ public class GameScreen extends Screen {
     }
 
     private void increaseDifficulty() {
-        difficulty+=50;
+        difficulty+=28;
 
         spawnChance += spawnChanceIncRate;
         spawnChanceIncRate -= spawnChance/200;
@@ -422,9 +422,17 @@ public class GameScreen extends Screen {
 
         gradeChanceChange *= 0.975f;
 
-        scrollSpeed = -9-score/50;
+        scrollSpeed = -9-score/20;
         bg1.setSpeedX(scrollSpeed);
         bg2.setSpeedX(scrollSpeed);
+        for (Professor x:professors)
+            x.setProfessorSpeed(scrollSpeed);
+        if (heart != null)
+            heart.setBonusSpeed(scrollSpeed);
+        if (su != null)
+            su.setBonusSpeed(scrollSpeed);
+        if (brain != null)
+            brain.setBonusSpeed(scrollSpeed);
     }
 
     private int nextGrade() {
@@ -530,8 +538,7 @@ public class GameScreen extends Screen {
             Swarm.user.saveCloudData("su", sus + "");
             Swarm.user.saveCloudData("brain", brains + "");
         }
-        // Set all variables to null. You will be recreating them in the
-        // constructor.
+        // Set all variables to null. Will be recreated in the constructor.
         bg1 = null;
         bg2 = null;
         stuAnim = null;
@@ -617,7 +624,7 @@ public class GameScreen extends Screen {
             if (j <= currTime && currTime < j + 60) {
                 if (i < stat.length / 2 && stat[i + 1] >= 0) {
                     Assets.coinS.play(1);
-                    coin += stat[i + 1] * (Professor.marks.get(i + 1)+2);
+                    coin += stat[i + 1] * (Professor.marks.get(i + 1)/2+2);
                     stat[i + 1] = -1;
                 }
                 if (j <= currTime && currTime < j + 30) {
@@ -642,7 +649,7 @@ public class GameScreen extends Screen {
         for (i=stat.length/2;i>=0;i--)
             if (stat[i] >= 0) {
                 Assets.coinS.play(1);
-                coin += stat[i] * (Professor.marks.get(i)+2);
+                coin += stat[i] * (Professor.marks.get(i)/2+2);
                 stat[i ] = -1;
             }
 
@@ -659,8 +666,10 @@ public class GameScreen extends Screen {
 
     @Override
     public void pause() {
-        if (state == GameState.Running)
+        if (state == GameState.Running) {
+            Assets.clickS.play(1);
             state = GameState.Paused;
+        }
     }
 
     @Override
@@ -710,6 +719,7 @@ public class GameScreen extends Screen {
     public static void addCoin(int d) {
         coins += d;
     }
+
     public void addScore(int dScore) {
         score += dScore;
     }
